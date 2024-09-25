@@ -1,0 +1,8 @@
+contract/target
+/.vs
+*.swp
+*~
+.vscode/settings.json
+.DS_Store
+#Jetbrains IntelliJ/RustRover
+.idea/
