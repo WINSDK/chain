@@ -1,25 +1,25 @@
 use crate::DataKey;
 
-use soroban_sdk::{contract, contractimpl, contracttype, Address, Bytes, Env, String};
 use soroban_sdk::token::Interface;
+use soroban_sdk::{contract, contractimpl, contracttype, Address, Bytes, Env, String};
 use soroban_token_sdk::TokenUtils;
 
-fn has_administrator(e: &Env) -> bool {
+pub fn has_administrator(e: &Env) -> bool {
     let key = DataKey::Admin;
     e.storage().instance().has(&key)
 }
 
-fn read_administrator(e: &Env) -> Address {
+pub fn read_administrator(e: &Env) -> Address {
     let key = DataKey::Admin;
     e.storage().instance().get(&key).unwrap()
 }
 
-fn write_administrator(e: &Env, id: &Address) {
+pub fn write_administrator(e: &Env, id: &Address) {
     let key = DataKey::Admin;
     e.storage().instance().set(&key, id);
 }
 
-fn read_balance(e: &Env, addr: Address) -> i128 {
+pub fn read_balance(e: &Env, addr: Address) -> i128 {
     let key = DataKey::Balance(addr);
     if let Some(balance) = e.storage().persistent().get(&key) {
         // e.storage()
@@ -31,7 +31,7 @@ fn read_balance(e: &Env, addr: Address) -> i128 {
     }
 }
 
-fn write_balance(e: &Env, addr: Address, amount: i128) {
+pub fn write_balance(e: &Env, addr: Address, amount: i128) {
     let key = DataKey::Balance(addr);
     e.storage().persistent().set(&key, &amount);
     // e.storage()
@@ -39,7 +39,7 @@ fn write_balance(e: &Env, addr: Address, amount: i128) {
     //     .extend_ttl(&key, BALANCE_LIFETIME_THRESHOLD, BALANCE_BUMP_AMOUNT);
 }
 
-fn receive_balance(e: &Env, addr: Address, amount: i128) {
+pub fn receive_balance(e: &Env, addr: Address, amount: i128) {
     let balance = read_balance(e, addr.clone());
     write_balance(e, addr, balance + amount);
 }
@@ -52,11 +52,13 @@ pub fn spend_balance(e: &Env, addr: Address, amount: i128) {
     write_balance(e, addr, balance - amount);
 }
 
-fn write_metadata(e: &Env, metadata: Metadata) {
-    e.storage().persistent().set(&crate::METADATA_KEY, &metadata);
+pub fn write_metadata(e: &Env, metadata: Metadata) {
+    e.storage()
+        .persistent()
+        .set(&crate::METADATA_KEY, &metadata);
 }
 
-fn check_nonnegative_amount(amount: i128) {
+pub fn check_nonnegative_amount(amount: i128) {
     if amount < 0 {
         panic!("negative amount is not allowed: {}", amount)
     }
@@ -80,13 +82,7 @@ impl Token {
         }
         write_administrator(&e, &admin);
 
-        write_metadata(
-            &e,
-            Metadata {
-                outcome,
-                name
-            },
-        )
+        write_metadata(&e, Metadata { outcome, name })
     }
 
     pub fn mint(e: Env, to: Address, amount: i128) {
@@ -148,18 +144,18 @@ impl Interface for Token {
         read_balance(&e, id)
     }
 
-    fn transfer(_e: Env, _from: Address, _to: Address, _amount: i128) {
-        // from.require_auth();
+    fn transfer(e: Env, from: Address, to: Address, amount: i128) {
+        from.require_auth();
 
-        // check_nonnegative_amount(amount);
+        check_nonnegative_amount(amount);
 
         // e.storage()
         //     .instance()
         //     .extend_ttl(INSTANCE_LIFETIME_THRESHOLD, INSTANCE_BUMP_AMOUNT);
 
-        // spend_balance(&e, from.clone(), amount);
-        // receive_balance(&e, to.clone(), amount);
-        // TokenUtils::new(&e).events().transfer(from, to, amount);
+        spend_balance(&e, from.clone(), amount);
+        receive_balance(&e, to.clone(), amount);
+        TokenUtils::new(&e).events().transfer(from, to, amount);
     }
 
     fn transfer_from(_e: Env, _spender: Address, _from: Address, _to: Address, _amount: i128) {

@@ -1,4 +1,5 @@
-contract/target
+prediction_contract/target
+token_contract/target
 /.vs
 *.swp
 *~

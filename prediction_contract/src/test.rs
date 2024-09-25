@@ -1,5 +1,4 @@
 #![cfg(test)]
 
 #[test]
-fn generic() {
-}
+fn generic() {}

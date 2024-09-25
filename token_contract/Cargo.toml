@@ -1,0 +1,21 @@
+[package]
+name = "prediction-contract"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+soroban-sdk = { version = "21.7" }
+soroban-token-sdk = { version = "21.7" }
+
+[dev-dependencies]
+soroban-sdk = { version = "21.7", features = ["testutils"] }
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = true
+debug-assertions = false
+panic = "abort"
+# codegen-units = 1
+# lto = true
