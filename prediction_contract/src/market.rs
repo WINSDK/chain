@@ -43,7 +43,8 @@ pub struct PredictionMarket;
 impl PredictionMarket {
     pub fn initialize(
         e: Env,
-        token_wasm_hash: BytesN<32>,
+        o1_wasm_hash: BytesN<32>,
+        o2_wasm_hash: BytesN<32>,
         outcome1: Bytes,
         outcome2: Bytes,
         desc: Bytes,
@@ -67,11 +68,11 @@ impl PredictionMarket {
             result: 0,
             asserted_outcome_id: BytesN::from_array(&e, &[0; 32]),
             outcome1: Outcome {
-                contract: token::create_contract(&e, &token_wasm_hash, &market_id, &outcome1),
+                contract: token::create_contract(&e, &o1_wasm_hash, &market_id, &outcome1),
                 title: outcome1,
             },
             outcome2: Outcome {
-                contract: token::create_contract(&e, &token_wasm_hash, &market_id, &outcome2),
+                contract: token::create_contract(&e, &o2_wasm_hash, &market_id, &outcome2),
                 title: outcome2,
             },
             desc,
