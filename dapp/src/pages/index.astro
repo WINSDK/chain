@@ -1,9 +1,48 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
-import helloWorld from "../contracts/hello_world";
-const { result } = await helloWorld.hello({ to: "you" });
-const greeting = result.join(" ");
+import { CallContract } from "../../utils/contract_caller";
+import { Contract, SorobanRpc, Networks, nativeToScVal, Keypair, scValToNative } from "@stellar/stellar-sdk";
+
+// initialise server and contract ID
+const server = new SorobanRpc.Server(
+    "https://soroban-testnet.stellar.org:443",
+);
+const helloId = import.meta.env.PUBLIC_HELLO_CONTRACT_ID;
+const networkPass = Networks.TESTNET;
+const helloContract = new Contract(helloId);
+
+// get testing account details (TODO: use Freighter for user account)
+const kp = Keypair.fromSecret(import.meta.env.PUBLIC_SOROBAN_SECRET);
+const account = await server.getAccount(kp.publicKey());
+
+/*
+* The below code will invoke the hello-world contract on testnet, and 
+* return the response to the web view, under the 'greeting'.
+* 
+*/
+
+let greeting = "ta";
+
+// builds, signs and sends the transaction
+let helloResponse = await CallContract(
+	account,
+	kp,
+	networkPass,
+	server,
+	helloContract,
+	"hello",
+	nativeToScVal("world!"),
+);
+
+// handle response
+if (helloResponse == null) {
+	greeting = "Issue with invoking hello...";
+} else {
+	if (scValToNative(helloResponse) instanceof Array) {
+		greeting = scValToNative(helloResponse).join(" ")
+	}
+}
 ---
 
 <script is:inline>var global = global || window;</script>
@@ -40,7 +79,7 @@ const greeting = result.join(" ");
 		<h1>{greeting}</h1>
 		<p class="instructions">
 			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
+			<strong>Wow!</strong> This above message was invoked from a contract.
 		</p>
 		<ul role="list" class="link-card-grid">
 			<Card
