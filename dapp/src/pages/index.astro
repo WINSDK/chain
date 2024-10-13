@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
+import ConnectWallet from "../components/ConnectWallet.astro";
+import Counter from "../components/Counter.astro";
 import { CallContract } from "../../utils/contract_caller";
 import { Contract, SorobanRpc, Networks, nativeToScVal, Keypair, scValToNative } from "@stellar/stellar-sdk";
 
@@ -22,10 +24,10 @@ const account = await server.getAccount(kp.publicKey());
 * 
 */
 
-let greeting = "ta";
+let greeting = "Loading...";
 
 // builds, signs and sends the transaction
-let helloResponse = await CallContract(
+const helloResponse = await CallContract(
 	account,
 	kp,
 	networkPass,
@@ -77,20 +79,21 @@ if (helloResponse == null) {
 			</defs>
 		</svg>
 		<h1>{greeting}</h1>
+		<ConnectWallet/>
+
 		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Wow!</strong> This above message was invoked from a contract.
+			<Counter/>
 		</p>
 		<ul role="list" class="link-card-grid">
 			<Card
-				href="https://docs.astro.build/"
-				title="Documentation"
-				body="Learn how Astro works and explore the official API docs."
+				href=`https://stellar.expert/explorer/testnet/contract/${helloId}`
+				title="Hello contract"
+				body="View on Stellar Expert"
 			/>
 			<Card
-				href="https://astro.build/integrations/"
-				title="Integrations"
-				body="Supercharge your project with new frameworks and libraries."
+				href=`https://stellar.expert/explorer/testnet/contract/${import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID}`
+				title="Increment contract"
+				body="View on Stellar Expert"
 			/>
 			<Card
 				href="https://astro.build/themes/"

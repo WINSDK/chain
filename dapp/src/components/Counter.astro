@@ -1,0 +1,69 @@
+<strong>Incrementor</strong><br />
+Current value: <strong id="current-value" aria-live="polite">???</strong><br/>
+<br/>
+<button data-increment aria-controls="current-value">Increment</button>
+
+<script>
+import { Contract, SorobanRpc, Networks, nativeToScVal, Keypair, scValToNative } from "@stellar/stellar-sdk";
+import { loadedPublicKey } from "../../utils/stellar_wallets_kit";
+import { CallContract } from "../../utils/contract_caller";
+import { getPos } from "../../utils/position_const";
+import confetti from 'canvas-confetti';
+
+const button = document.querySelector("[data-increment]") as HTMLInputElement;
+const currentValue = document.querySelector("#current-value") as HTMLElement;
+
+button.addEventListener("click", async () => {
+	const publicKey = loadedPublicKey();
+    const buttonPos = getPos();
+
+	if (!publicKey) {
+	    alert("Please connect your wallet first!");
+        confetti({
+            particleCount: 10,
+            spread: 360,
+            origin: { y: buttonPos!.y, x: buttonPos!.x },
+            shapes: ['star']
+        });
+	    return;
+	} else {
+	}
+
+	button.disabled = true;
+	button.classList.add("loading");
+	currentValue.innerHTML =
+	currentValue.innerHTML +
+	'<span class="visually-hidden"> – updating…</span>';
+
+	const server = new SorobanRpc.Server(
+        "https://soroban-testnet.stellar.org:443",
+    );
+    const networkPass = Networks.TESTNET;
+    const incContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
+    const account = await server.getAccount(publicKey);
+    const kp = Keypair.fromPublicKey(publicKey)
+	try {
+        const result = await CallContract(
+            account,
+            kp,
+            networkPass,
+            server,
+            incContract,
+            "increment",
+            nativeToScVal("")
+        );
+
+        // handle response
+        if (result == null) {
+            currentValue.innerHTML = "Error calling increment.";
+        } else {
+            currentValue.innerHTML = scValToNative(result).tostring();
+        }
+	} catch (e) {
+	    console.error(e);
+	}
+
+	button.disabled = false;
+	button.classList.remove("loading");
+});
+</script>

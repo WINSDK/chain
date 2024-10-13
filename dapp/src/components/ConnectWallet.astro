@@ -1,0 +1,62 @@
+<div id="connect-wrap" class="wrap" aria-live="polite">
+    <!-- This class is for the connect wallet button. -->
+    <div class="ellipsis">
+      <button data-connect aria-controls="connect-wrap">Connect Wallet</button>
+    </div>
+  </div>
+  
+  <style>
+    .wrap {
+      text-align: center;
+    }
+  
+    .ellipsis {
+      line-height: 2.7rem;
+      margin: auto;
+      max-width: 12rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      white-space: nowrap;
+    }
+  </style>
+  
+  <script>
+    import { kit, setPublicKey } from "../../utils/stellar_wallets_kit";
+    import { setPos } from "../../utils/position_const";
+  
+    // assert as HTMLElement/HTMLInputElement in order to get the proper methods
+    const ellipsis = document.querySelector("#connect-wrap .ellipsis") as HTMLElement;
+    const button = document.querySelector("[data-connect]") as HTMLInputElement;  // get the element with "data-connect"
+
+    setPos(button.getBoundingClientRect());
+
+    async function setLoggedIn(publicKey: string) {
+      ellipsis.innerHTML = `Signed in as ${publicKey}`;
+      ellipsis.title = publicKey;
+    }
+  
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+
+      // on click, open modal to select wallet and address details
+      try {
+        await kit.openModal({
+          onWalletSelected: async (option) => {
+            try {
+              kit.setWallet(option.id);
+              const { address } = await kit.getAddress();
+              setPublicKey(address);
+              await setLoggedIn(address);
+            } catch (e) {
+              console.error(e);
+            }
+          },
+        });
+      } catch (e) {
+        console.error(e);
+      }
+  
+      button.disabled = false;
+    });
+  </script>
