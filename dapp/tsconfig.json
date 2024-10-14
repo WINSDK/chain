@@ -1,9 +1,13 @@
 {
-  "extends": "astro/tsconfigs/strictest",
+  "extends": "astro/tsconfigs/base",
   "exclude": [
     "packages"
   ],
   "compilerOptions": {
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "module": "ES2020"
+  },
+  "ts-node": {
+    "esm": true
   }
 }

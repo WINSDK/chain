@@ -4,66 +4,55 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/>
 <button data-increment aria-controls="current-value">Increment</button>
 
 <script>
-import { Contract, SorobanRpc, Networks, nativeToScVal, Keypair, scValToNative } from "@stellar/stellar-sdk";
-import { loadedPublicKey } from "../../utils/stellar_wallets_kit";
-import { CallContract } from "../../utils/contract_caller";
-import { getPos } from "../../utils/position_const";
-import confetti from 'canvas-confetti';
+    import { Contract, Networks, scValToNative } from "@stellar/stellar-sdk";
+    import pkg from '@stellar/freighter-api';
+    const { isConnected, setAllowed, getAddress, getNetworkDetails, signTransaction } = pkg;
+    import { CallSignContract } from "../../utils/contract_caller";
+    import { getServer } from "../../utils/state";
 
-const button = document.querySelector("[data-increment]") as HTMLInputElement;
-const currentValue = document.querySelector("#current-value") as HTMLElement;
+    const button = document.querySelector("[data-increment]") as HTMLInputElement;
+    const currentValue = document.querySelector("#current-value") as HTMLElement;
 
-button.addEventListener("click", async () => {
-	const publicKey = loadedPublicKey();
-    const buttonPos = getPos();
+    button.addEventListener("click", async () => {
+        // handle connecting to user wallet
+        alert("Getting address from Freighter!")
+        const addressObj = await getAddress();
+        let publicKey: string;
+        
+        publicKey = addressObj.address;
 
-	if (!publicKey) {
-	    alert("Please connect your wallet first!");
-        confetti({
-            particleCount: 10,
-            spread: 360,
-            origin: { y: buttonPos!.y, x: buttonPos!.x },
-            shapes: ['star']
-        });
-	    return;
-	} else {
-	}
+        if (!publicKey || addressObj.error) {
+            alert("Problem retrieving address from Freighter.");
+            return;
+        }
 
-	button.disabled = true;
-	button.classList.add("loading");
-	currentValue.innerHTML =
-	currentValue.innerHTML +
-	'<span class="visually-hidden"> – updating…</span>';
+        button.disabled = true;
+        button.classList.add("loading");
+        currentValue.innerHTML = currentValue.innerHTML + '<span class="visually-hidden"> – updating…</span>';
 
-	const server = new SorobanRpc.Server(
-        "https://soroban-testnet.stellar.org:443",
-    );
-    const networkPass = Networks.TESTNET;
-    const incContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
-    const account = await server.getAccount(publicKey);
-    const kp = Keypair.fromPublicKey(publicKey)
-	try {
-        const result = await CallContract(
+        // get details to build contract invocation
+        const server = getServer();
+        const networkPass = Networks.TESTNET;
+        const incContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
+        const account = await server!.getAccount(publicKey);
+        alert("Server: " + server!.serverURL + "PubKey: " + publicKey);
+        
+        const incResponse = await CallSignContract(
             account,
-            kp,
             networkPass,
-            server,
+            server!,
             incContract,
-            "increment",
-            nativeToScVal("")
-        );
+            "increment"
+        )
 
         // handle response
-        if (result == null) {
+        if (incResponse == null) {
             currentValue.innerHTML = "Error calling increment.";
         } else {
-            currentValue.innerHTML = scValToNative(result).tostring();
+            currentValue.innerHTML = scValToNative(incResponse).tostring();
         }
-	} catch (e) {
-	    console.error(e);
-	}
 
-	button.disabled = false;
-	button.classList.remove("loading");
-});
+        button.disabled = false;
+        button.classList.remove("loading");
+    });
 </script>

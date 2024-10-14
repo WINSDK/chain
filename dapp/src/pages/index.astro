@@ -4,17 +4,16 @@ import Card from "../components/Card.astro";
 import ConnectWallet from "../components/ConnectWallet.astro";
 import Counter from "../components/Counter.astro";
 import { CallContract } from "../../utils/contract_caller";
-import { Contract, SorobanRpc, Networks, nativeToScVal, Keypair, scValToNative } from "@stellar/stellar-sdk";
+import { setServer } from "../../utils/state";
+import { Contract, Networks, nativeToScVal, Keypair, scValToNative } from "@stellar/stellar-sdk";
 
-// initialise server and contract ID
-const server = new SorobanRpc.Server(
-    "https://soroban-testnet.stellar.org:443",
-);
+// initialise server into state (do this just once)
+const server = setServer(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
 const helloId = import.meta.env.PUBLIC_HELLO_CONTRACT_ID;
 const networkPass = Networks.TESTNET;
 const helloContract = new Contract(helloId);
 
-// get testing account details (TODO: use Freighter for user account)
+// get testing account details
 const kp = Keypair.fromSecret(import.meta.env.PUBLIC_SOROBAN_SECRET);
 const account = await server.getAccount(kp.publicKey());
 
@@ -26,7 +25,7 @@ const account = await server.getAccount(kp.publicKey());
 
 let greeting = "Loading...";
 
-// builds, signs and sends the transaction
+// builds, signs and sends the transaction using the test account
 const helloResponse = await CallContract(
 	account,
 	kp,

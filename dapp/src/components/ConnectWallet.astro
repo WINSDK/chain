@@ -22,9 +22,8 @@
   </style>
   
   <script>
-    import { kit, setPublicKey } from "../../utils/stellar_wallets_kit";
-    import { setPos } from "../../utils/position_const";
-  
+    import { setPos } from "../../utils/state";
+    import { setAllowed, getAddress } from "@stellar/freighter-api";
     // assert as HTMLElement/HTMLInputElement in order to get the proper methods
     const ellipsis = document.querySelector("#connect-wrap .ellipsis") as HTMLElement;
     const button = document.querySelector("[data-connect]") as HTMLInputElement;  // get the element with "data-connect"
@@ -39,20 +38,10 @@
     button.addEventListener("click", async () => {
       button.disabled = true;
 
-      // on click, open modal to select wallet and address details
+      // on click, open modal to select wallet get address details
       try {
-        await kit.openModal({
-          onWalletSelected: async (option) => {
-            try {
-              kit.setWallet(option.id);
-              const { address } = await kit.getAddress();
-              setPublicKey(address);
-              await setLoggedIn(address);
-            } catch (e) {
-              console.error(e);
-            }
-          },
-        });
+        await setAllowed();
+        await setLoggedIn((await getAddress()).address);
       } catch (e) {
         console.error(e);
       }
