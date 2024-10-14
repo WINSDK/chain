@@ -4,11 +4,10 @@ import Card from "../components/Card.astro";
 import ConnectWallet from "../components/ConnectWallet.astro";
 import Counter from "../components/Counter.astro";
 import { CallContract } from "../../utils/contract_caller";
-import { setServer } from "../../utils/state";
-import { Contract, Networks, nativeToScVal, Keypair, scValToNative } from "@stellar/stellar-sdk";
+import { Contract, Networks, nativeToScVal, Keypair, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
 
 // initialise server into state (do this just once)
-const server = setServer(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
+const server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
 const helloId = import.meta.env.PUBLIC_HELLO_CONTRACT_ID;
 const networkPass = Networks.TESTNET;
 const helloContract = new Contract(helloId);
@@ -78,10 +77,10 @@ if (helloResponse == null) {
 			</defs>
 		</svg>
 		<h1>{greeting}</h1>
-		<ConnectWallet/>
+		<ConnectWallet />
 
 		<p class="instructions">
-			<Counter/>
+			<Counter />
 		</p>
 		<ul role="list" class="link-card-grid">
 			<Card

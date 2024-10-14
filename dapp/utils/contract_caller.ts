@@ -1,7 +1,5 @@
-import pkg from '@stellar/freighter-api';
-const {isConnected, setAllowed, getAddress, getNetworkDetails, signTransaction} = pkg;
-import { Contract, BASE_FEE, SorobanRpc, TransactionBuilder, Account, xdr, Keypair} from "@stellar/stellar-sdk";
-import { get } from 'http';
+import Types from '@stellar/freighter-api';
+import { Contract, BASE_FEE, SorobanRpc, Transaction, TransactionBuilder, Account, xdr, Keypair} from "@stellar/stellar-sdk";
 
 /*
 * This function is for read only contracts, and uses the test
@@ -80,9 +78,9 @@ export async function CallSignContract(
     method: string,
     ...params: xdr.ScVal[]
 ) {
-    server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
-    sourceAcc = await server.getAccount((await getAddress()).address);
-    sourceContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
+    // server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
+    // sourceAcc = await server.getAccount((await Types.getAddress()).address);
+    // sourceContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
     // builds, signs and sends the transaction
     const tx = new TransactionBuilder(sourceAcc, {
         fee: BASE_FEE,
@@ -92,15 +90,19 @@ export async function CallSignContract(
     .setTimeout(30)
     .build();
     
-    const prepTx = await server!.prepareTransaction(tx);
-    const signedTx  = await signTransaction(prepTx.toXDR(), {
+    const prepTx = await server.prepareTransaction(tx);
+    const signedXdr  = await Types.signTransaction(prepTx.toEnvelope().toXDR("base64"), {
         networkPassphrase: networkPass
     });
+    if (signedXdr.error) {
+        alert(signedXdr.error);
+    }
+    alert("Tx signed successfully.");
+
+    const signedTx = TransactionBuilder.fromXDR(signedXdr.signedTxXdr, networkPass) as Transaction;
 
     try {
-        let sendResponse = await server!.sendTransaction(
-            TransactionBuilder.fromXDR(signedTx.signedTxXdr, networkPass),
-        );
+        let sendResponse = await server.sendTransaction(signedTx);
         console.log(`Sent transaction: ${JSON.stringify(sendResponse, null, " ")}`);
 
         // check if the tx was sent properly

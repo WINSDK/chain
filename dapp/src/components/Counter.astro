@@ -1,27 +1,25 @@
-<strong>Incrementor</strong><br />
-Current value: <strong id="current-value" aria-live="polite">???</strong><br/>
-<br/>
+<strong>Incrementor</strong><br/>
+Current value: <strong id="current-value" aria-live="polite">???</strong><br/><br/>
 <button data-increment aria-controls="current-value">Increment</button>
 
 <script>
-    import { Contract, Networks, scValToNative } from "@stellar/stellar-sdk";
-    import pkg from '@stellar/freighter-api';
-    const { isConnected, setAllowed, getAddress, getNetworkDetails, signTransaction } = pkg;
+    import { Contract, Networks, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
+    import { getAddress } from '@stellar/freighter-api';
     import { CallSignContract } from "../../utils/contract_caller";
-    import { getServer } from "../../utils/state";
+    import { getPubKey } from "../../utils/state";
 
-    const button = document.querySelector("[data-increment]") as HTMLInputElement;
     const currentValue = document.querySelector("#current-value") as HTMLElement;
-
-    button.addEventListener("click", async () => {
+    const button = document.querySelector("[data-increment]") as HTMLButtonElement;
+    
+    async function handleCounter() {
+        console.log("Counter.astro script fired");
         // handle connecting to user wallet
-        alert("Getting address from Freighter!")
         const addressObj = await getAddress();
         let publicKey: string;
         
-        publicKey = addressObj.address;
+        publicKey = getPubKey();
 
-        if (!publicKey || addressObj.error) {
+        if (publicKey == undefined || addressObj.error) {
             alert("Problem retrieving address from Freighter.");
             return;
         }
@@ -31,11 +29,11 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/>
         currentValue.innerHTML = currentValue.innerHTML + '<span class="visually-hidden"> – updating…</span>';
 
         // get details to build contract invocation
-        const server = getServer();
+        const server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
         const networkPass = Networks.TESTNET;
         const incContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
         const account = await server!.getAccount(publicKey);
-        alert("Server: " + server!.serverURL + "PubKey: " + publicKey);
+        // alert("Server: " + server!.serverURL + "PubKey: " + publicKey);
         
         const incResponse = await CallSignContract(
             account,
@@ -49,10 +47,12 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/>
         if (incResponse == null) {
             currentValue.innerHTML = "Error calling increment.";
         } else {
-            currentValue.innerHTML = scValToNative(incResponse).tostring();
+            currentValue.innerHTML = scValToNative(incResponse);
         }
 
         button.disabled = false;
         button.classList.remove("loading");
-    });
+    }
+
+    button.addEventListener("click", async () => handleCounter());
 </script>
