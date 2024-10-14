@@ -1,4 +1,3 @@
-import { SorobanRpc } from "@stellar/stellar-sdk";
 
 // this util is for astro files to pass globals and constants
 const positionState: { pos: DOMRect | undefined } = {
