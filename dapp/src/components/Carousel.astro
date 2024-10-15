@@ -1,0 +1,54 @@
+<script>
+  export default {
+    data() {
+      return {
+        slides: [
+          {
+            title: "Slide 1",
+            image: "../assets/inspire.jpg",
+          },
+          {
+            title: "Slide 2",
+            image: "../assets/inspire.jpg"
+          },          {
+            title: "Slide 3",
+            image: "../assets/inspire.jpg",
+          },
+          {
+            title: "Slide 4",
+            image: "dapp\assets\inspire.jpg"
+          },
+        ],
+        currentIndex: 0,
+      };
+    },
+    methods: {
+      prevSlide() {
+        this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+      },
+      nextSlide() {
+        this.currentIndex = (this.currentIndex + 1) % this.slides.length;  
+
+      },
+    },
+  };
+</script>
+
+<template>
+  <button @click="prevSlide">Previous</button>
+  <div class="carousel">
+    <div class="slide" v-for="slide in slides" :key="slide.title">
+      <img :src="slide.image" :alt="slide.title">
+    </div>
+  </div>
+  <button @click="nextSlide">Next</button>
+</template>
+
+<style>
+    .carousel {
+    width: 800px;
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+    }
+</style>
