@@ -3,7 +3,6 @@ import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
 import ConnectWallet from "../components/ConnectWallet.astro";
 import App from "../pages/App.astro";
-import TokenInterface from "../components/TokenInterface.astro";
 import marketData from "../data/markets.json";
 import Counter from "../components/Counter.astro";
 import { CallContract } from "../../utils/contract_caller";
@@ -20,11 +19,6 @@ const helloContract = new Contract(helloId);
 const kp = Keypair.fromSecret(import.meta.env.PUBLIC_SOROBAN_SECRET);
 const account = await server.getAccount(kp.publicKey());
 
-
-export interface Props {
-	title: string;
-	description: string;
-}
 
 /*
 * The below code will invoke the hello-world contract on testnet, and 
