@@ -9,3 +9,4 @@ marketer/markets.db
 .DS_Store
 #Jetbrains IntelliJ/RustRover
 .idea/
+node_modules

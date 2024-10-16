@@ -2,9 +2,12 @@
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
 import ConnectWallet from "../components/ConnectWallet.astro";
+import App from "../pages/App.astro";
+import marketData from "../data/markets.json";
 import Counter from "../components/Counter.astro";
 import { CallContract } from "../../utils/contract_caller";
 import { Contract, Networks, nativeToScVal, Keypair, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
+
 
 // initialise server into state (do this just once)
 const server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
@@ -15,6 +18,7 @@ const helloContract = new Contract(helloId);
 // get testing account details
 const kp = Keypair.fromSecret(import.meta.env.PUBLIC_SOROBAN_SECRET);
 const account = await server.getAccount(kp.publicKey());
+
 
 /*
 * The below code will invoke the hello-world contract on testnet, and 
@@ -79,10 +83,23 @@ if (helloResponse == null) {
 		<h1>{greeting}</h1>
 		<ConnectWallet />
 
+		<p class="tutorials">
+			Think you know better than anyone else? 🤔 Get rewarded for your wisdom! 🏆
+		</p>
+
+		<Card
+			title="Token Interface 👩‍⚖️"
+			body="Learn about the inner workings of a prediction contract after the expiry time has elapsed! ⌛"
+		/>
+
+		<App />
+
 		<p class="instructions">
 			<Counter />
 		</p>
 		<ul role="list" class="link-card-grid">
+
+
 			<Card
 				href=`https://stellar.expert/explorer/testnet/contract/${helloId}`
 				title="Hello contract"
@@ -106,6 +123,8 @@ if (helloResponse == null) {
 		</ul>
 	</main>
 </Layout>
+
+
 
 <style>
 	main {
@@ -140,6 +159,13 @@ if (helloResponse == null) {
 		background-size: 400%;
 		background-position: 0%;
 	}
+	.tutorials {
+		margin-bottom: 2rem;
+		border: 1px solid rgba(var(--accent-light), 45%);
+		background: linear-gradient(rgba(var(--accent-light), 66%), rgba(var(--accent-light), 33%));
+		padding: 1.5rem;
+		border-radius: 8px;
+	}
 	.instructions {
 		margin-bottom: 2rem;
 		border: 1px solid rgba(var(--accent-light), 25%);
@@ -163,5 +189,18 @@ if (helloResponse == null) {
 		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
 		gap: 2rem;
 		padding: 0;
+	}
+	.triplet_grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+		margin-bottom: 2rem;
+		border: 1px solid rgba(var(--accent-light), 45%);
+		background: linear-gradient(rgba(var(--accent-light), 66%), rgba(var(--accent-light), 33%));
+		padding: 1.5rem;
+		border-radius: 8px;
+	}
+	.span-2 {
+		grid-column-end: span 2;
 	}
 </style>
