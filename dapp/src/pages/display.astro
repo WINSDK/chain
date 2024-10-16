@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CardCarousel from '../components/CardCarousel.astro';
+import marketData from "../data/markets.json";
+
+---
+<Layout title="Find the data below:" description="Find the data below:">
+{
+    marketData.map((marketData) => {
+    return (
+        <CardCarousel
+        title={marketData.title}
+        description={marketData.description}
+        />
+    );
+    })
+}
+</Layout>

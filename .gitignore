@@ -7,3 +7,4 @@ token_contract/target
 .DS_Store
 #Jetbrains IntelliJ/RustRover
 .idea/
+node_modules

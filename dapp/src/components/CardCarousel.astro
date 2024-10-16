@@ -1,0 +1,46 @@
+---
+export interface Props {
+	title: string;
+	description: string;
+    betOptions: string[];
+    betPercentage: number[];
+}
+
+const {title, description, betOptions, betPercentage} = Astro.props;
+
+---
+
+<div class="market-wrapper">
+  <div class="market-card">
+    <ul class="market-list">
+      <li><h3>{title}</h3></li>
+      <li>{description}</li>
+      <li>
+        <ul>
+          <li v-for="(option, index) in betOptions" :key="index">
+            { betOptions } : { betPercentage }%
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+<style>
+    .market-wrapper {
+        justify-content: center;
+        align-items: center;
+        height: 20vh;
+    }
+    .market-list {
+        list-style: none;
+    }
+    .market-card {
+        background: green;
+        width: 400px;
+        padding: 10px;
+        margin-bottom: 20px;
+        flex-direction: column;
+}
+</style>

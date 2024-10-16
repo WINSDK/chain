@@ -4,7 +4,8 @@ import Card from "../components/Card.astro";
 import ConnectWallet from "../components/ConnectWallet.astro";
 import Prediction from "../components/Prediction.astro";
 import TokenInterface from "../components/TokenInterface.astro";
-import Carousel from "../components/Carousel.astro";
+import CardCarousel from '../components/CardCarousel.astro';
+import marketData from "../data/markets.json";
 import Counter from "../components/Counter.astro";
 import { CallContract } from "../../utils/contract_caller";
 import { Contract, Networks, nativeToScVal, Keypair, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
@@ -19,6 +20,12 @@ const helloContract = new Contract(helloId);
 // get testing account details
 const kp = Keypair.fromSecret(import.meta.env.PUBLIC_SOROBAN_SECRET);
 const account = await server.getAccount(kp.publicKey());
+
+
+export interface Props {
+	title: string;
+	description: string;
+}
 
 /*
 * The below code will invoke the hello-world contract on testnet, and 
@@ -85,7 +92,6 @@ if (helloResponse == null) {
 
 		<p class="tutorials">
 			<Prediction />
-			<Carousel />
 			<div class="triplet_grid">
 				<div class="span-2">
 					<Card title="📢 Contract #1" href="/predictions" target="_blank"/>
@@ -101,7 +107,7 @@ if (helloResponse == null) {
 			</div>
 		</p>
 
-		
+
 		<p class="instructions">
 			<Counter />
 		</p>
@@ -110,6 +116,7 @@ if (helloResponse == null) {
 			<Card
 				title="Token Interface 👩‍⚖️"
 				body="Learn about the inner workings of a prediction contract after the expiry time has elapsed! ⌛"
+				href="/display"
 			/>
 
 			<Card

@@ -1,0 +1,12 @@
+[
+    { "title": "Card 1", "description": "This is the description for card 1." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Card 2", "description": "This is the description for card 2." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Card 3", "description": "This is the description for card 3." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Card 4", "description": "This is the description for card 4." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Card 5", "description": "This is the description for card 5." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Card 6", "description": "This is the description for card 6." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Card 7", "description": "This is the description for card 7." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Card 8", "description": "This is the description for card 8." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Card 9", "description": "This is the description for card 9." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Card 10","description": "This is the description for card 10." , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]}
+  ]

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@astrojs/react": "^3.6.2",
+    "astro-carousel": "^2.1.0"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.79.5"
+  }
+}
