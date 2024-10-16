@@ -1,12 +1,15 @@
 ---
+import stockImage from "../assets/inspire.jpg";
+
 export interface Props {
 	title: string;
+  imageUrl: string;
 	description: string;
   betOptions: string[];
   betPercentage: number[];
 }
 
-const {title, description, betOptions, betPercentage} = Astro.props;
+const {title, imageUrl, description, betOptions, betPercentage} = Astro.props;
 
 ---
 
@@ -21,6 +24,10 @@ const {title, description, betOptions, betPercentage} = Astro.props;
           <li key={index}>
             <h3>{option}</h3>
             ({betPercentage[index]}%)
+            <img src="https://images.unsplash.com/photo-1544894079-e81a9eb1da8b?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+            alt="Image description" 
+            width="120" height="200"
+            /> 
           </li>
         ))}
       </ul>
