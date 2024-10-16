@@ -1,5 +1,5 @@
 import Types from '@stellar/freighter-api';
-import { Contract, BASE_FEE, SorobanRpc, Transaction, TransactionBuilder, Account, xdr, Keypair} from "@stellar/stellar-sdk";
+import { Asset, Contract, BASE_FEE, SorobanRpc, Transaction, TransactionBuilder, Account, xdr, Keypair, Operation } from "@stellar/stellar-sdk";
 
 /*
 * This function is for read only contracts, and uses the test
@@ -67,7 +67,7 @@ export async function CallContract(
 }
 
 /*
-* This function is for payment or contracts requiring the 
+* This function is called for contract invocations requiring the 
 * user to sign with their wallet account. Uses Freighter API.
 */
 export async function CallSignContract(
@@ -94,9 +94,6 @@ export async function CallSignContract(
     const signedXdr  = await Types.signTransaction(prepTx.toEnvelope().toXDR("base64"), {
         networkPassphrase: networkPass
     });
-    if (signedXdr.error) {
-        alert(signedXdr.error);
-    }
     alert("Tx signed successfully.");
 
     const signedTx = TransactionBuilder.fromXDR(signedXdr.signedTxXdr, networkPass) as Transaction;
@@ -135,7 +132,55 @@ export async function CallSignContract(
             throw sendResponse.errorResult;
         }
     } catch (err) {
-        console.log("Sending transaction failed");
+        console.log("Sending signed transaction failed");
+        console.log(JSON.stringify(err, null, " "));
+        return null;
+    }
+}
+
+/*
+* This function is for payment transactions. Amount is specified in 
+* string format and can be up to 7 d.p. representation.
+* Custom assets can be sent by specifying a code and issuer pair.
+*/
+var assetNative = Asset.native();
+var assetCustom = new Asset("", "");
+export async function CallPayment(
+    sourceAcc: Account,
+    networkPass: string, 
+    server: SorobanRpc.Server,
+    destination: string,
+    sendAmount: string,
+    sendAsset: Asset,
+) {
+    if (sendAsset.issuer == null) {
+        sendAsset = Asset.native();
+    }
+    const tx = new TransactionBuilder(sourceAcc, {
+        fee: BASE_FEE,
+        networkPassphrase: networkPass,
+    })
+    .addOperation(Operation.payment({
+        destination: destination,
+        amount: sendAmount,
+        asset: sendAsset,
+    }))
+    .setTimeout(30)
+    .build();
+    const prepTx = await server.prepareTransaction(tx);
+    const signedXdr  = await Types.signTransaction(prepTx.toEnvelope().toXDR("base64"), {
+        networkPassphrase: networkPass
+    });
+    alert("Tx signed successfully.");
+
+    const signedTx = TransactionBuilder.fromXDR(signedXdr.signedTxXdr, networkPass) as Transaction;
+
+    try {
+        let sendResponse = await server.sendTransaction(signedTx);
+        console.log(`Sent payment: ${JSON.stringify(sendResponse, null, " ")}`);
+
+    } catch (err) {
+        console.log("Sending payment failed");
         console.log(JSON.stringify(err, null, " "));
         return null;
     }
