@@ -1,2 +1,11 @@
 =====
 block chain class assignment
+
+
+For each contract, run the following to deploy to testnet
+
+1) stellar contract optimize
+2) stellar contract deploy
+3) stellar contract invoke
+4) stellar contract init
+

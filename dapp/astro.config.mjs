@@ -18,6 +18,7 @@ export default defineConfig({
     '/local',
     '/display',
     '/carousel',
+    '/App',
   ],
   integrations: [react(), tailwind()]
 })

@@ -1,7 +1,11 @@
 {
   "dependencies": {
     "@astrojs/check": "^0.4.1",
-    "@astrojs/react": "^3.6.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1",
+    "react-slick": "^0.30.2",
+    "slick-carousel": "^1.8.1",
     "@stellar/freighter-api": "^3.0.0",
     "@stellar/stellar-sdk": "^12.3.0",
     "astro": "^4.2.4",

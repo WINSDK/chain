@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
 import ConnectWallet from "../components/ConnectWallet.astro";
 import Prediction from "../components/Prediction.astro";
+import App from "../pages/App.astro";
 import TokenInterface from "../components/TokenInterface.astro";
 import CardCarousel from '../components/CardCarousel.astro';
 import marketData from "../data/markets.json";
@@ -92,18 +93,19 @@ if (helloResponse == null) {
 
 		<p class="tutorials">
 			<Prediction />
+			<App />
 			<div class="triplet_grid">
 				<div class="span-2">
-					<Card title="📢 Contract #1" href="/local" target="_blank"/>
+					<Card title="📢 Contract #1" href="/local" client:only="react" target="_blank"/>
 				</div>
-				<Card title="📢 Contract #2 (carousel)" href="/carousel" target="_blank"/>
-				<Card title="📢 Contract #3" href="/predictions" target="_blank"/>
-				<Card title="📢 Contract #4" href="/predictions" target="_blank"/>
-				<Card title="📢 Contract #5" href="/predictions" target="_blank"/>
-				<Card title="📢 Contract #6" href="/predictions" target="_blank"/>
-				<Card title="📢 Contract #7" href="/predictions" target="_blank"/>
-				<Card title="📢 Contract #8" href="/predictions" target="_blank"/>
-				<Card title="📢 Contract #9" href="/predictions" target="_blank"/>
+				<Card title="📢 Contract #2 (carousel)" href="/carousel" client:only="react" target="_blank"/>
+				<Card title="📢 Contract #3 (App)" href="/App" client:only="react" target="_blank"/>
+				<Card title="📢 Contract #4" href="/predictions" client:only="react" target="_blank"/>
+				<Card title="📢 Contract #5" href="/predictions" client:only="react" target="_blank"/>
+				<Card title="📢 Contract #6" href="/predictions" client:only="react" target="_blank"/>
+				<Card title="📢 Contract #7" href="/predictions" client:only="react" target="_blank"/>
+				<Card title="📢 Contract #8" href="/predictions" client:only="react" target="_blank"/>
+				<Card title="📢 Contract #9" href="/predictions" client:only="react" target="_blank"/>
 			</div>
 		</p>
 
