@@ -1,0 +1,23 @@
+---
+import Counter from "../components/localCounter.jsx";
+import '../styles.css';
+Counter
+---
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+    <meta name='viewport' content='width=device-width' />
+    <meta name='generator' content={Astro.generator} />
+    <title>Astro</title>
+  </head>
+  <body>
+    <h1 class='text-5xl text-center mt-12'>Astro Framework</h1>
+    <h2 class='text-2xl text-center mt-4'>With React and TailwindCss</h2>
+    <div class='flex flex-col justify-center items-center mx-auto min-h-screen'>
+      <Counter client:load />
+    </div>
+    <p>End of counter</p>
+  </body>
+</html>

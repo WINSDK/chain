@@ -3,6 +3,8 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 
 import react from '@astrojs/react';
 
+import tailwind from '@astrojs/tailwind';
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
@@ -13,6 +15,8 @@ export default defineConfig({
   },
   routes: [
     '/predictions',
+    '/local',
+    '/display',
   ],
-  integrations: [react()]
+  integrations: [react(), tailwind()]
 })
