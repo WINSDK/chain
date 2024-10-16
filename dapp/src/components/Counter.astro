@@ -1,0 +1,58 @@
+<strong>Incrementor</strong><br/>
+Current value: <strong id="current-value" aria-live="polite">???</strong><br/><br/>
+<button data-increment aria-controls="current-value">Increment</button>
+
+<script>
+    import { Contract, Networks, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
+    import { getAddress } from '@stellar/freighter-api';
+    import { CallSignContract } from "../../utils/contract_caller";
+    import { getPubKey } from "../../utils/state";
+
+    const currentValue = document.querySelector("#current-value") as HTMLElement;
+    const button = document.querySelector("[data-increment]") as HTMLButtonElement;
+    
+    async function handleCounter() {
+        console.log("Counter.astro script fired");
+        // handle connecting to user wallet
+        const addressObj = await getAddress();
+        let publicKey: string;
+        
+        publicKey = getPubKey();
+
+        if (publicKey == undefined || addressObj.error) {
+            alert("Problem retrieving address from Freighter.");
+            return;
+        }
+
+        button.disabled = true;
+        button.classList.add("loading");
+        currentValue.innerHTML = currentValue.innerHTML + '<span class="visually-hidden"> – updating…</span>';
+
+        // get details to build contract invocation
+        const server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
+        const networkPass = Networks.TESTNET;
+        const incContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
+        const account = await server!.getAccount(publicKey);
+        // alert("Server: " + server!.serverURL + "PubKey: " + publicKey);
+        
+        const incResponse = await CallSignContract(
+            account,
+            networkPass,
+            server!,
+            incContract,
+            "increment"
+        )
+
+        // handle response
+        if (incResponse == null) {
+            currentValue.innerHTML = "Error calling increment.";
+        } else {
+            currentValue.innerHTML = scValToNative(incResponse);
+        }
+
+        button.disabled = false;
+        button.classList.remove("loading");
+    }
+
+    button.addEventListener("click", async () => handleCounter());
+</script>

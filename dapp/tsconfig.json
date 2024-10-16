@@ -1,0 +1,13 @@
+{
+  "extends": "astro/tsconfigs/base",
+  "exclude": [
+    "packages"
+  ],
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "module": "ES2022"
+  },
+  "ts-node": {
+    "esm": true
+  }
+}
