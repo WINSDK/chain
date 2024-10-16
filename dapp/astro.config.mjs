@@ -13,12 +13,5 @@ export default defineConfig({
       https: true,
     },
   },
-  routes: [
-    '/predictions',
-    '/local',
-    '/display',
-    '/carousel',
-    '/App',
-  ],
   integrations: [react(), tailwind()]
 })

@@ -1,12 +1,12 @@
 [
-    { "title": "Prediction Market 1", "imageUrl": "../../public/images/1.jpg", "description": "What will the total damages be from Hurricane Helene by 31 October 2024? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 2", "imageUrl": "../../public/images/2.jpg", "description": "Will there be another MRT breakdown in 2024? " , "betOptions": ["Yes", "No"], "betPercentage": [65.5, 34.5]},
-    { "title": "Prediction Market 3", "imageUrl": "../../public/images/3.jpg", "description": "Who will win the US Presidential elections in 2024?", "betOptions": ["Republican Party", "Democratic Party" ,"Independent"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 4", "imageUrl": "../../public/images/4.jpg", "description": "Which political party will take control of the US Congress in 2024? " , "betOptions": ["Republican Party", "Democratic Party", "Independent"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 5", "imageUrl": "../../public/images/5.jpg", "description": "Which political party will take control of the US Senate in 2024? " , "betOptions": ["Republican Party", "Democratic Party", "Independent"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 6", "imageUrl": "../../public/images/1.jpg", "description": "Which Constructor team will be victorious in the F1 Grand Prix 2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 7", "imageUrl": "../../public/images/2.jpg", "description": "Which driver will lead in individual points in the F1 Grand Prix 2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 8", "imageUrl": "../../public/images/3.jpg", "description": "Which team will win the UEFA Champions League in May 2025? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 9", "imageUrl": ".../../public/images/4.jpg", "description": "Which team will win La Liga 2024/2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 10","imageUrl": "../../public/images/5.jpg", "description": "Who will win the Japanese elections? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]}
+    { "title": "Prediction Market 1", "imageUrl": "/images/1.jpg", "description": "What will the total damages be from Hurricane Helene by 31 October 2024? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Prediction Market 2", "imageUrl": "/images/2.jpg", "description": "Will there be another MRT breakdown in 2024? " , "betOptions": ["Yes", "No"], "betPercentage": [65.5, 34.5]},
+    { "title": "Prediction Market 3", "imageUrl": "/images/3.jpg", "description": "Who will win the US Presidential elections in 2024?", "betOptions": ["Republican Party", "Democratic Party" ,"Independent"], "betPercentage": [40, 35, 25]},
+    { "title": "Prediction Market 4", "imageUrl": "/images/4.jpg", "description": "Which political party will take control of the US Congress in 2024? " , "betOptions": ["Republican Party", "Democratic Party", "Independent"], "betPercentage": [40, 35, 25]},
+    { "title": "Prediction Market 5", "imageUrl": "/images/5.jpg", "description": "Which political party will take control of the US Senate in 2024? " , "betOptions": ["Republican Party", "Democratic Party", "Independent"], "betPercentage": [40, 35, 25]},
+    { "title": "Prediction Market 6", "imageUrl": "/images/1.jpg", "description": "Which Constructor team will be victorious in the F1 Grand Prix 2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Prediction Market 7", "imageUrl": "/images/2.jpg", "description": "Which driver will lead in individual points in the F1 Grand Prix 2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Prediction Market 8", "imageUrl": "/images/3.jpg", "description": "Which team will win the UEFA Champions League in May 2025? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Prediction Market 9", "imageUrl": "./images/4.jpg", "description": "Which team will win La Liga 2024/2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
+    { "title": "Prediction Market 10","imageUrl": "/images/5.jpg", "description": "Who will win the Japanese elections? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]}
 ]
