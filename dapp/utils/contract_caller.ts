@@ -143,8 +143,6 @@ export async function CallSignContract(
 * string format and can be up to 7 d.p. representation.
 * Custom assets can be sent by specifying a code and issuer pair.
 */
-var assetNative = Asset.native();
-var assetCustom = new Asset("", "");
 export async function CallPayment(
     sourceAcc: Account,
     networkPass: string, 
