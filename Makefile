@@ -3,6 +3,10 @@ SUBDIRS   = $(filter-out ./,$(dir $($MAKEFILES)))
 
 default: build
 
+run: build
+	(cd marketer && cargo r) &
+	(cd dapp && npm run dev) &
+
 all: test
 
 build:
