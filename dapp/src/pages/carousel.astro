@@ -1,7 +1,7 @@
 ---
-import Counter from "../components/localCounter.jsx";
+import App from "../components/App.jsx";
+import SimpleSlider from "../components/SimpleSlider.jsx";
 import '../styles.css';
-
 ---
 
 <html lang='en'>
@@ -10,14 +10,14 @@ import '../styles.css';
     <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
     <meta name='viewport' content='width=device-width' />
     <meta name='generator' content={Astro.generator} />
-    <title>Astro</title>
+    <title>Astro Carousel</title>
   </head>
   <body>
     <h1 class='text-5xl text-center mt-12'>Astro Framework</h1>
-    <h2 class='text-2xl text-center mt-4'>With React and TailwindCss</h2>
+    <h2 class='text-2xl text-center mt-4'>With React-Slick and Slide-Carousel</h2>
     <div class='flex flex-col justify-center items-center mx-auto min-h-screen'>
-      <Counter client:load />
+      <SimpleSlider />
     </div>
-    <p>End of counter</p>
+    <p>End of carousel App</p>
   </body>
 </html>

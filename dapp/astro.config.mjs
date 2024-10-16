@@ -17,6 +17,7 @@ export default defineConfig({
     '/predictions',
     '/local',
     '/display',
+    '/carousel',
   ],
   integrations: [react(), tailwind()]
 })
