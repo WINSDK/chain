@@ -1,5 +1,7 @@
 prediction_contract/target
 token_contract/target
+marketer/target
+marketer/markets.db
 /.vs
 *.swp
 *~
