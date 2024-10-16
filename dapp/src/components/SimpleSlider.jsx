@@ -3,7 +3,6 @@ import Slider from '@ant-design/react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import marketData from "../data/markets.json"
-import CardCarousel from '../components/CardCarousel.astro';
 
 const SimpleSlider = () => {
   var settings = {
