@@ -4,13 +4,15 @@ import CardCarousel from '../components/CardCarousel.astro';
 import marketData from "../data/markets.json";
 
 ---
-<Layout title="Find the data below:" description="Find the data below:">
+<Layout title="Display of static data in card form:" description="Find the data below:">
 {
     marketData.map((marketData) => {
     return (
         <CardCarousel
         title={marketData.title}
         description={marketData.description}
+        betOptions={marketData.betOptions}
+        betPercentage={marketData.betPercentage}
         />
     );
     })
