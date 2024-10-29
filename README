@@ -9,3 +9,5 @@ For each contract, run the following to deploy to testnet
 3) stellar contract invoke
 4) stellar contract init
 
+How to generate test account:
+* stellar keys generate --global me --network testnet
