@@ -17,7 +17,6 @@ pub fn gen_market_id(block: u32, desc: &Bytes) -> MarketId {
 
 #[contracttype]
 pub enum DataKey {
-    Market(MarketId),
-    BalanceO1(Address),
-    BalanceO2(Address),
+    Market,
+    Balance(Address),
 }

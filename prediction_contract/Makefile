@@ -5,6 +5,13 @@ all: test
 test: build
 	cargo test
 
+deploy: build
+	stellar contract optimize --wasm ./target/wasm32-unknown-unknown/release/prediction_contract.wasm
+	stellar contract deploy \
+		--wasm ./target/wasm32-unknown-unknown/release/prediction_contract.wasm \
+		--source me \
+		--network testnet
+
 build:
 	$(MAKE) -C ../token_contract || break;
 	soroban contract build
