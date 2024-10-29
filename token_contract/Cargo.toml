@@ -1,5 +1,5 @@
 [package]
-name = "prediction-contract"
+name = "token-contract"
 version = "0.0.0"
 edition = "2021"
 
