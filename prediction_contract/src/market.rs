@@ -1,5 +1,5 @@
-use crate::{token, DataKey, MarketId};
-use soroban_sdk::{contract, contractimpl, contracttype, Address, Bytes, BytesN, Env};
+use crate::{token, DataKey, Error, MarketId};
+use soroban_sdk::{assert_with_error, contract, contractimpl, contracttype, panic_with_error, Address, BytesN, Env, String};
 
 fn read_market(e: &Env) -> Market {
     e.storage().instance().get(&DataKey::Market).unwrap()
@@ -20,7 +20,7 @@ fn write_balance(e: &Env, id: &Address, balance: i128) {
 #[derive(Clone)]
 #[contracttype]
 struct Outcome {
-    title: Bytes,
+    title: String,
     contract: Address,
 }
 
@@ -31,7 +31,7 @@ pub struct Market {
     asserted_outcome_id: BytesN<32>,
     outcome1: Outcome,
     outcome2: Outcome,
-    desc: Bytes,
+    desc: String,
 }
 
 #[contract]
@@ -41,25 +41,23 @@ pub struct PredictionMarket;
 impl PredictionMarket {
     pub fn initialize(
         e: Env,
-        o1_wasm_hash: BytesN<32>,
-        o2_wasm_hash: BytesN<32>,
-        outcome1: Bytes,
-        outcome2: Bytes,
-        desc: Bytes,
+        token_wasm_hash: BytesN<32>,
+        outcome1: String,
+        outcome2: String,
+        desc: String,
     ) -> MarketId {
         // Input validation.
-        assert!(!outcome1.is_empty(), "Empty first outcome");
-        assert!(!outcome2.is_empty(), "Empty second outcome");
-        assert!(!desc.is_empty(), "Empty description");
-        assert_ne!(o1_wasm_hash, o2_wasm_hash, "Outcome contracts are the same");
-        assert_ne!(outcome1, outcome2, "Outcomes are the same");
+        assert_with_error!(e, !outcome1.is_empty(), Error::EmptyOutcome);
+        assert_with_error!(e, !outcome2.is_empty(), Error::EmptyOutcome);
+        assert_with_error!(e, !desc.is_empty(), Error::EmptyDescription);
+        assert_with_error!(e, outcome1 != outcome2, Error::OutcomesMatch);
 
         let block_number = e.ledger().sequence();
-        let market_id = crate::gen_market_id(block_number, &desc);
+        let market_id = crate::gen_market_id(&e, block_number, &desc);
 
         // Check if market already exists.
         if e.storage().instance().has(&market_id) {
-            panic!("Market already exists");
+            panic_with_error!(&e, Error::MarketExists);
         }
 
         // Store market data
@@ -67,11 +65,11 @@ impl PredictionMarket {
             result: 0,
             asserted_outcome_id: BytesN::from_array(&e, &[0; 32]),
             outcome1: Outcome {
-                contract: token::create_contract(&e, &o1_wasm_hash, &market_id, &outcome1),
+                contract: token::create_contract(&e, &token_wasm_hash, &market_id, &outcome1),
                 title: outcome1,
             },
             outcome2: Outcome {
-                contract: token::create_contract(&e, &o2_wasm_hash, &market_id, &outcome2),
+                contract: token::create_contract(&e, &token_wasm_hash, &market_id, &outcome2),
                 title: outcome2,
             },
             desc,
@@ -83,11 +81,11 @@ impl PredictionMarket {
     }
 
     /// Function to assert the market outcome.
-    pub fn assert_market(e: Env, asserted_outcome: Bytes) {
+    pub fn assert_market(e: Env, asserted_outcome: String) {
         let mut market = read_market(&e);
 
         // Check if assertion is already active or market is resolved.
-        assert!(market.result == 0, "Assertion active or resolved");
+        assert_with_error!(e, market.result == 0, Error::AssertionActiveOrResolved);
 
         // Validate asserted outcome.
         if asserted_outcome == market.outcome1.title {
@@ -95,16 +93,16 @@ impl PredictionMarket {
         } else if asserted_outcome == market.outcome2.title {
             market.result = 2;
         } else {
-            panic!("Invalid asserted outcome");
+            panic_with_error!(e, Error::InvalidAssertedOutcome);
         }
 
         // Set market as asserted.
         write_market(&e, market);
     }
 
-    pub fn deposit(e: Env, id: Address, outcome: Bytes, amount: i128) {
+    pub fn deposit(e: Env, id: Address, outcome: String, amount: i128) {
         if amount <= 0 {
-            panic!("Can't deposit less than 1 tokens");
+            panic_with_error!(e, Error::CantDepositLessThan1Token);
         }
 
         let market = read_market(&e);
@@ -113,7 +111,7 @@ impl PredictionMarket {
         } else if outcome == market.outcome2.title {
             &market.outcome2.contract
         } else {
-            panic!("Invalid outcome to deposit into")
+            panic_with_error!(e, Error::InvalidOutcomeToDepositInto);
         };
 
         let token_client = token::Client::new(&e, &id);
@@ -127,12 +125,12 @@ impl PredictionMarket {
         let market = read_market(&e);
 
         // Check if assertion is already active or market is resolved.
-        assert!(market.result == 0, "Assertion active or resolved");
+        assert_with_error!(e, market.result == 0, Error::AssertionActiveOrResolved);
 
         let from = match market.result {
             1 => &market.outcome1.contract,
             2 => &market.outcome2.contract,
-            _ => panic!("Invalid outcome to deposit into"),
+            _ => panic_with_error!(e, Error::InvalidOutcomeToDepositInto),
         };
 
         let balance = read_balance(&e, &id);

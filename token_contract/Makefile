@@ -8,7 +8,7 @@ test: build
 deploy: build
 	stellar contract optimize --wasm ./target/wasm32-unknown-unknown/release/token_contract.wasm
 	stellar contract deploy \
-		--wasm ./target/wasm32-unknown-unknown/release/token_contract.wasm \
+		--wasm ./target/wasm32-unknown-unknown/release/token_contract.optimized.wasm \
 		--source me \
 		--network testnet
 

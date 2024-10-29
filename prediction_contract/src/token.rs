@@ -1,14 +1,14 @@
-use soroban_sdk::{xdr::ToXdr, Address, Bytes, BytesN, Env};
+use soroban_sdk::{xdr::ToXdr, Address, Bytes, BytesN, Env, String};
 
 soroban_sdk::contractimport!(
-    file = "../token_contract/target/wasm32-unknown-unknown/release/prediction_contract.wasm"
+    file = "../token_contract/target/wasm32-unknown-unknown/release/token_contract.optimized.wasm"
 );
 
 pub fn create_contract(
     e: &Env,
     token_wasm_hash: &BytesN<32>,
     market_id: &Bytes,
-    outcome: &Bytes,
+    outcome: &String,
 ) -> Address {
     let mut salt = Bytes::new(e);
     salt.append(&outcome.clone().to_xdr(e));
