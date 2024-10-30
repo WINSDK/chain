@@ -18,4 +18,5 @@ A simple Astro dapp letting you bet on stuff that might happen.
 - `npm install`
 - `npm run dev`
 
-This dapp requires the [Freighter](https://www.freighter.app/) wallet extension for users to sign transactions.
+You need to have [stellar-cli](https://developers.stellar.org/docs/build/smart-contracts/getting-started/setup#install-the-stellar-cli) set up on your end to interact with the testnet.
+This dapp also requires the [Freighter](https://www.freighter.app/) wallet extension for users to sign transactions.

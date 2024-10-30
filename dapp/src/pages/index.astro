@@ -5,7 +5,7 @@ import ConnectWallet from "../components/ConnectWallet.astro";
 import App from "../pages/App.astro";
 import marketData from "../data/markets.json";
 import Counter from "../components/Counter.astro";
-import { CallContract } from "../../utils/contract_caller";
+import { CallContract, CallContractData } from "../../utils/contract_caller";
 import { Contract, Networks, nativeToScVal, Keypair, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
 
 
@@ -26,8 +26,9 @@ const account = await server.getAccount(kp.publicKey());
 * 
 */
 
-let greeting = "Loading...";
+let greeting = "Welcome to <prediction market>!!";
 
+/*
 // builds, signs and sends the transaction using the test account
 const helloResponse = await CallContract(
 	account,
@@ -47,6 +48,8 @@ if (helloResponse == null) {
 		greeting = scValToNative(helloResponse).join(" ")
 	}
 }
+*/
+
 ---
 
 <script is:inline>var global = global || window;</script>
@@ -88,6 +91,7 @@ if (helloResponse == null) {
 		</p>
 
 		<Card
+			href=""
 			title="Token Interface 👩‍⚖️"
 			body="Learn about the inner workings of a prediction contract after the expiry time has elapsed! ⌛"
 		/>

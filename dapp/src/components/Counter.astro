@@ -5,11 +5,16 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
 <script>
     import { Contract, Networks, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
     import { getAddress } from '@stellar/freighter-api';
-    import { CallSignContract } from "../../utils/contract_caller";
+    import { CallSignContract, CallContractData } from "../../utils/contract_caller";
     import { getPubKey } from "../../utils/state";
 
     const currentValue = document.querySelector("#current-value") as HTMLElement;
     const button = document.querySelector("[data-increment]") as HTMLButtonElement;
+
+    async function loadCounter() {
+        const currentValue = document.querySelector("#current-value") as HTMLElement;
+        currentValue.innerHTML = await CallContractData(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID, 'COUNTER');
+    }
     
     async function handleCounter() {
         console.log("Counter.astro script fired");
