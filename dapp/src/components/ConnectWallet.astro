@@ -44,11 +44,18 @@
       // on click, open modal to select wallet get address details
       try {
         await setAllowed();
-        await setLoggedIn((await getAddress()).address);
+        const addressStr = (await getAddress()).address;
+        const resp = await getAddress();
+        if (resp.error || resp.address === "") {
+          throw new Error('Problem retrieving address from Freighter! Please check the extension.');
+        } else {
+          await setLoggedIn(resp.address)
+        }
       } catch (e) {
+        alert(e);
         console.error(e);
+        button.disabled = false;
       }
-  
       button.disabled = false;
     });
   </script>

@@ -1,15 +1,17 @@
 import Types from '@stellar/freighter-api';
 import { Asset, Contract, BASE_FEE, SorobanRpc, Transaction, TransactionBuilder, Account, Address, xdr, Keypair, Operation, } from "@stellar/stellar-sdk";
-import { Durability } from '@stellar/stellar-sdk/rpc';
-import { symbol } from 'astro:schema';
-import { execSync } from 'child_process';
+import exec from 'sync-exec';
 
 // Function to execute and log shell commands
 function exe(command) {
     console.log(command);
     try {
-        const output = execSync(command, { stdio: 'pipe', maxBuffer: 1024 * 1024 }).toString();
-        return output;
+        // const output = execSync(command, { stdio: 'pipe', maxBuffer: 1024 * 1024 }).toString();
+        const output = exec(command, { stdio: 'pipe', maxBuffer: 1024 * 1024 });
+        if (output.stderr) {
+            throw new Error('Error executing cmd:', output.stderr);
+        }
+        return output.stdout;
     }
     catch (err: any) {
         console.log(err);
@@ -199,56 +201,89 @@ export async function CallPayment(
     }
 }
 
-export async function CallEvents() {
+export async function CallContractData(contractId: string, symbolText: string) {
+    try {
+        const output = exe(`stellar contract read \
+            --id ${contractId} \
+            --network ${import.meta.env.PUBLIC_SOROBAN_NETWORK} \
+            --source ${import.meta.env.PUBLIC_SOROBAN_PK} \
+            --durability persistent \
+            --output json`
+        );
     
-}
+        // split the output by their commas, combine item indexes 1,2,3
+        var outputArr = new Array();
+        output.split(",").forEach(function(outputStr) {
+            // remove all leading and trailing double-double quotes ""%s""
+            outputStr = outputStr.replaceAll('""', '"');
+            outputArr.push(outputStr);
+        });
+        var data = outputArr[1] + ",\n" + outputArr[2] + ",\n" + outputArr[3];
+        data = data.substring(1, data.length-1);
+        const dataJson = JSON.parse(data);
+        
+        // rebuild new object using the values
+        interface contractData {
+            key: string;
+            val: any;
+        }
 
-export async function CallContractData(contractId: string, symbolText?: string) {
-    const output = exe(`stellar contract read \
-        --id ${contractId} \
-        --network ${import.meta.env.PUBLIC_SOROBAN_NETWORK} \
-        --source ${import.meta.env.PUBLIC_SOROBAN_PK} \
-        --durability persistent \
-        --output json`
-    );
-
-    // split the output by their commas, combine item indexes 1,2,3
-    var outputArr = new Array();
-    output.split(",").forEach(function(outputStr) {
-        // remove all leading and trailing double-double quotes ""%s""
-        outputStr = outputStr.replaceAll('""', '"');
-        outputArr.push(outputStr);
-    });
-    var data = outputArr[1] + ",\n" + outputArr[2] + ",\n" + outputArr[3];
-    data = data.substring(1, data.length-1);
-    const dataJson = JSON.parse(data);
+        // iterate through the storage, unmarshal key symbol and value, add to new object array
+        let contractDataArr = Array();
+        const obj = dataJson["contract_instance"]["storage"];
+        for (let i=0; i < obj.length; i++) {
+            const k = Object.values(Object.values(obj[i])[0])[0];
+            const v = Object.values(Object.values(obj[i])[1])[0];
+            let foo:contractData = {
+                key: k,
+                val: v
+            };
+            contractDataArr.push(foo);
+        }
+        console.log(contractDataArr);
     
-    // rebuild new object using the values
-    interface contractData {
-        key: string;
-        val: any;
-    }
-    let contractDataArr = Array();
-    // iterate through the storage, unmarshal key symbol and value
-    const obj = dataJson["contract_instance"]["storage"];
-    for (let i=0; i < obj.length; i++) {
-        const k = Object.values(Object.values(obj[i])[0])[0];
-        const v = Object.values(Object.values(obj[i])[1])[0];
-        let foo:contractData = {
-            key: k,
-            val: v
-        };
-        contractDataArr.push(foo);
-    }
-    console.log(contractDataArr);
-
-    // search for symbol key, if specified
-    if (typeof symbolText !== 'undefined') {
+        // search for symbol key in the object array
         console.log("Search key:", symbolText);
         let found = contractDataArr.find(element => element.key === symbolText);
+        if (found === undefined) {
+            console.log("Value not found.")
+            return null;
+        }
         console.log("Val:", found.val);
-        return found;
+        return found.val;
     }
-    // if not specified, return all entries
-    return contractDataArr;
+    catch (err) {
+        return null;
+    }
+}
+
+export async function CallContractData2(contractId: string, symbolText: string) {
+    console.log("CallContractData2:", contractId, symbolText);
+    const ledgerKey = xdr.LedgerKey.contractData(
+        new xdr.LedgerKeyContractData({
+          contract: new Address(contractId).toScAddress(),
+          key: xdr.ScVal.scvSymbol(symbolText),
+          durability: xdr.ContractDataDurability.persistent(),
+        }),
+    );
+    const keySymbol = ledgerKey.toXDR("base64");
+    console.log(keySymbol);
+
+    let requestBody = {
+    "jsonrpc": "2.0",
+    "id": 8675309,
+    "method": "getLedgerEntries",
+    "params": {
+        "keys": [keySymbol]
+        }
+    }
+    let res = await fetch('https://soroban-testnet.stellar.org', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+    })
+    let json = await res.json()
+    console.log(json)
 }

@@ -5,17 +5,19 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
 <script>
     import { Contract, Networks, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
     import { getAddress } from '@stellar/freighter-api';
-    import { CallSignContract, CallContractData } from "../../utils/contract_caller";
+    import { CallSignContract, CallContractData2 } from "../../utils/contract_caller";
     import { getPubKey } from "../../utils/state";
 
     const currentValue = document.querySelector("#current-value") as HTMLElement;
     const button = document.querySelector("[data-increment]") as HTMLButtonElement;
 
-    async function loadCounter() {
-        const currentValue = document.querySelector("#current-value") as HTMLElement;
-        currentValue.innerHTML = await CallContractData(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID, 'COUNTER');
-    }
-    
+    window.addEventListener(
+        "load", async () => {
+        const contractCallResp = await CallContractData2(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID, 'COUNTER');
+        if (contractCallResp !== null) {
+            currentValue.innerHTML = String(contractCallResp);
+        }
+    });
     async function handleCounter() {
         console.log("Counter.astro script fired");
         // handle connecting to user wallet
@@ -23,9 +25,10 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
         let publicKey: string;
         
         publicKey = getPubKey();
+        console.log(publicKey);
 
         if (publicKey == undefined || addressObj.error) {
-            alert("Problem retrieving address from Freighter.");
+            alert("Problem retrieving address from Freighter! Please check the extension.");
             return;
         }
 

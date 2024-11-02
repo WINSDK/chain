@@ -14,8 +14,12 @@ A simple Astro dapp letting you bet on stuff that might happen.
 
 # Getting Started
 
+Clean node modules:
+- run `npm rm -r node_modules`
+- run `npm cache clean --force`
+- run `npm install`
+
 - `cp .env.example .env`
-- `npm install`
 - `npm run dev`
 
 You need to have [stellar-cli](https://developers.stellar.org/docs/build/smart-contracts/getting-started/setup#install-the-stellar-cli) set up on your end to interact with the testnet.
