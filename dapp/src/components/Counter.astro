@@ -5,7 +5,7 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
 <script>
     import { Contract, Networks, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
     import { getAddress } from '@stellar/freighter-api';
-    import { CallSignContract, CallContractData2 } from "../../utils/contract_caller";
+    import { CallSignContract, CallContractData } from "../../utils/contract_caller";
     import { getPubKey } from "../../utils/state";
 
     const currentValue = document.querySelector("#current-value") as HTMLElement;
@@ -13,7 +13,8 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
 
     window.addEventListener(
         "load", async () => {
-        const contractCallResp = await CallContractData2(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID, 'COUNTER');
+        const contractCallResp = await CallContractData(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID, 'COUNTER');
+        console.log(contractCallResp);
         if (contractCallResp !== null) {
             currentValue.innerHTML = String(contractCallResp);
         }

@@ -201,64 +201,14 @@ export async function CallPayment(
     }
 }
 
+/*
+* This function takes in the contract ID and the key of the data to access,
+* then returns the data representation after querying the contract using
+* Soroban RPC. 
+* This function will only return the first data entry in the array.
+*/
 export async function CallContractData(contractId: string, symbolText: string) {
-    try {
-        const output = exe(`stellar contract read \
-            --id ${contractId} \
-            --network ${import.meta.env.PUBLIC_SOROBAN_NETWORK} \
-            --source ${import.meta.env.PUBLIC_SOROBAN_PK} \
-            --durability persistent \
-            --output json`
-        );
-    
-        // split the output by their commas, combine item indexes 1,2,3
-        var outputArr = new Array();
-        output.split(",").forEach(function(outputStr) {
-            // remove all leading and trailing double-double quotes ""%s""
-            outputStr = outputStr.replaceAll('""', '"');
-            outputArr.push(outputStr);
-        });
-        var data = outputArr[1] + ",\n" + outputArr[2] + ",\n" + outputArr[3];
-        data = data.substring(1, data.length-1);
-        const dataJson = JSON.parse(data);
-        
-        // rebuild new object using the values
-        interface contractData {
-            key: string;
-            val: any;
-        }
-
-        // iterate through the storage, unmarshal key symbol and value, add to new object array
-        let contractDataArr = Array();
-        const obj = dataJson["contract_instance"]["storage"];
-        for (let i=0; i < obj.length; i++) {
-            const k = Object.values(Object.values(obj[i])[0])[0];
-            const v = Object.values(Object.values(obj[i])[1])[0];
-            let foo:contractData = {
-                key: k,
-                val: v
-            };
-            contractDataArr.push(foo);
-        }
-        console.log(contractDataArr);
-    
-        // search for symbol key in the object array
-        console.log("Search key:", symbolText);
-        let found = contractDataArr.find(element => element.key === symbolText);
-        if (found === undefined) {
-            console.log("Value not found.")
-            return null;
-        }
-        console.log("Val:", found.val);
-        return found.val;
-    }
-    catch (err) {
-        return null;
-    }
-}
-
-export async function CallContractData2(contractId: string, symbolText: string) {
-    console.log("CallContractData2:", contractId, symbolText);
+    console.log("CallContractData:", contractId, symbolText);
     const ledgerKey = xdr.LedgerKey.contractData(
         new xdr.LedgerKeyContractData({
           contract: new Address(contractId).toScAddress(),
@@ -277,13 +227,27 @@ export async function CallContractData2(contractId: string, symbolText: string) 
         "keys": [keySymbol]
         }
     }
-    let res = await fetch('https://soroban-testnet.stellar.org', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-    })
-    let json = await res.json()
-    console.log(json)
+    try {
+        let res = await fetch('https://soroban-testnet.stellar.org', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        })
+        let json = await res.json()
+        const dataArr = json.result.entries;
+
+        // get the xdr, parse from the base64 string
+        const parsed = xdr.LedgerEntryData.fromXDR((dataArr[0].xdr.toString()), "base64");
+        // const key = parsed['_value']['_attributes']['key']['_value'];
+        const val = parsed['_value']['_attributes']['val']['_value'];
+
+        // console.log(Buffer.from(key.buffer).toString());
+        return val;
+    }
+    catch (err) {
+        console.log("CallContractData:", err);
+        return null;
+    }
 }
