@@ -1,15 +1,21 @@
 <strong>Incrementor</strong><br/>
 Current value: <strong id="current-value" aria-live="polite">???</strong><br/><br/>
 <button data-increment aria-controls="current-value">Increment</button>
+<button data-decrement aria-controls="current-value">Decrement</button>
+
+<button data-poll>Poll Events</button>
 
 <script>
     import { Contract, Networks, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
     import { getAddress } from '@stellar/freighter-api';
     import { CallSignContract, CallContractData } from "../../utils/contract_caller";
+    import { CallEvents } from "../../utils/event_caller";
     import { getPubKey } from "../../utils/state";
 
     const currentValue = document.querySelector("#current-value") as HTMLElement;
-    const button = document.querySelector("[data-increment]") as HTMLButtonElement;
+    const incButton = document.querySelector("[data-increment]") as HTMLButtonElement;
+    const decButton = document.querySelector("[data-decrement]") as HTMLButtonElement;
+    const pollButton = document.querySelector("[data-poll]") as HTMLButtonElement;
 
     window.addEventListener(
         "load", async () => {
@@ -19,8 +25,9 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
             currentValue.innerHTML = String(contractCallResp);
         }
     });
-    async function handleCounter() {
-        console.log("Counter.astro script fired");
+
+    async function handleIncCounter() {
+        console.log("Counter.astro Increment script fired");
         // handle connecting to user wallet
         const addressObj = await getAddress();
         let publicKey: string;
@@ -33,8 +40,8 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
             return;
         }
 
-        button.disabled = true;
-        button.classList.add("loading");
+        incButton.disabled = true;
+        incButton.classList.add("loading");
         currentValue.innerHTML = currentValue.innerHTML + '<span class="visually-hidden"> – updating…</span>';
 
         // get details to build contract invocation
@@ -42,7 +49,6 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
         const networkPass = Networks.TESTNET;
         const incContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
         const account = await server!.getAccount(publicKey);
-        // alert("Server: " + server!.serverURL + "PubKey: " + publicKey);
         
         const incResponse = await CallSignContract(
             account,
@@ -59,9 +65,76 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
             currentValue.innerHTML = scValToNative(incResponse);
         }
 
-        button.disabled = false;
-        button.classList.remove("loading");
+        incButton.disabled = false;
+        incButton.classList.remove("loading");
     }
 
-    button.addEventListener("click", async () => handleCounter());
+    async function handleDecCounter() {
+        console.log("Counter.astro Decrement script fired");
+        // handle connecting to user wallet
+        const addressObj = await getAddress();
+        let publicKey: string;
+        
+        publicKey = getPubKey();
+        console.log(publicKey);
+
+        if (publicKey == undefined || addressObj.error) {
+            alert("Problem retrieving address from Freighter! Please check the extension.");
+            return;
+        }
+
+        decButton.disabled = true;
+        decButton.classList.add("loading");
+        currentValue.innerHTML = currentValue.innerHTML + '<span class="visually-hidden"> – updating…</span>';
+
+        // get details to build contract invocation
+        const server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
+        const networkPass = Networks.TESTNET;
+        const incContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
+        const account = await server!.getAccount(publicKey);
+        
+        const decResponse = await CallSignContract(
+            account,
+            networkPass,
+            server!,
+            incContract,
+            "decrement"
+        )
+
+        // handle response
+        if (decResponse == null) {
+            currentValue.innerHTML = "Error calling deccrement.";
+        } else {
+            currentValue.innerHTML = scValToNative(decResponse);
+        }
+
+        decButton.disabled = false;
+        decButton.classList.remove("loading");
+    }
+
+    async function handlePollEvents() {
+        console.log("Counter.astro PollEvents script fired");
+
+        pollButton.disabled = true;
+        pollButton.classList.add("loading");
+
+        // TODO: remove hard-coding on the event topics and search window!
+
+        const pollResponse = await CallEvents(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID, ['COUNTER', 'increment'], '10000');
+
+        // handle response
+        if (pollResponse == null) {
+            alert('Error polling events.')
+        } else {
+            alert(String(pollResponse));
+        }
+
+        pollButton.disabled = false;
+        pollButton.classList.remove("loading");
+    }
+
+    // map functions to button event listeners
+    incButton.addEventListener("click", async () => handleIncCounter());
+    decButton.addEventListener("click", async () => handleDecCounter());
+    pollButton.addEventListener("click", async () => handlePollEvents());
 </script>
