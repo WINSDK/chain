@@ -10,7 +10,7 @@ CREATE TABLE market (
 CREATE TABLE bet_options (
     id INTEGER PRIMARY KEY,
     market_id INTEGER NOT NULL,
-    option_text TEXT NOT NULL,
-    percentage REAL NOT NULL,
+    text TEXT NOT NULL,
+    stake INTEGER DEFAULT 0 NOT NULL,
     FOREIGN KEY (market_id) REFERENCES market(id)
 );

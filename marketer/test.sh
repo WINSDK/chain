@@ -14,6 +14,10 @@ curl -X POST localhost:1234/create_market \
     --silent \
     --show-error
 
+curl -X GET localhost:1234/market?id=1 \
+    --fail \
+    --silent \
+    --show-error
 
 curl -X GET localhost:1234/markets \
     --fail \
