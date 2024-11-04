@@ -1,0 +1,44 @@
+GET /markets
+OUTPUT
+    [
+        {
+            "id": i64,
+            "title": String,
+            "image_url": String,
+            "description": String,
+            "bets": [
+                {
+                    "text": String,
+                    "stake": u64
+                }
+            ]
+        },
+        ..
+    ]
+
+GET /market?id=<id>
+OUTPUT
+    {
+        "id": i64,
+        "title": String,
+        "image_url": String,
+        "description": String,
+        "bets": [
+            {
+                "text": String,
+                "stake": u64
+            }
+        ]
+    }
+
+POST /create_market
+INPUT
+    {
+        "title": String,
+        "image_url": String,
+        "description": String,
+        "bets": [String]
+    }
+
+GET /stake?id=<id>&option=<option>&amount=<amount>
+OUTPUT
