@@ -6,7 +6,6 @@ test: build
 	cargo test
 
 deploy: build
-	stellar contract optimize --wasm ./target/wasm32-unknown-unknown/release/token_contract.wasm
 	stellar contract deploy \
 		--wasm ./target/wasm32-unknown-unknown/release/token_contract.optimized.wasm \
 		--source me \
@@ -14,6 +13,7 @@ deploy: build
 
 build:
 	soroban contract build
+	stellar contract optimize --wasm ./target/wasm32-unknown-unknown/release/token_contract.wasm
 	@ls -l target/wasm32-unknown-unknown/release/*.wasm
 fmt:
 	cargo fmt --all
