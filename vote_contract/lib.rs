@@ -1,5 +1,5 @@
 #![no_std]
-use soroban_sdk::{Address, contract, contracttype, contractimpl, Env, log, Symbol, symbol_short, token};
+use soroban_sdk::{Address, contract, contracttype, contractimpl, Env, log, String, Symbol, symbol_short, token};
 
 #[contracttype]
 #[derive(Clone)]
@@ -21,7 +21,15 @@ const POLL: Symbol = symbol_short!("POLL");
 // Admin will be populated with the admin Address on contract init()
 pub enum Registry {
     Record(Address),
-    Admin,
+    Admin(Address),
+}
+
+#[contracttype]
+#[derive(Clone)]
+// struct for admin address
+pub struct AdminRecord {
+    pub is_init: u64,
+
 }
 
 #[contracttype]
@@ -61,7 +69,10 @@ impl VoteContract {
         else {
             // add admin address to registry
             admin.require_auth();
-            env.storage().instance().set(&Registry::Admin, &admin);
+            let admin_rec = AdminRecord {
+                is_init: 1,
+            };
+            env.storage().instance().set(&Registry::Admin(admin), &admin_rec);
             // add contract start and end time
             poll.start_time = env.ledger().timestamp();
             poll.end_time = env.ledger().timestamp() + duration;
@@ -74,6 +85,23 @@ impl VoteContract {
             env.storage().instance().set(&POLL, &poll);
             env.storage().instance().extend_ttl(100, 100);
         }
+    }
+
+    // testing fns for admin init
+    pub fn set_admin(env: Env, admin: Address) {
+        // add admin address to registry
+        admin.require_auth();
+        let admin_rec = AdminRecord {
+            is_init: 1,
+        };
+        env.storage().instance().set(&Registry::Admin(admin.clone()), &admin_rec);
+        env.storage().instance().extend_ttl(100, 100);
+    }
+
+    pub fn get_admin(env: Env, admin: Address) -> AdminRecord {
+        env.storage().instance().get(&Registry::Admin(admin)).unwrap_or(AdminRecord {
+            is_init: 0,
+        })
     }
 
     // function to stake votes for a prediction, in the dapp this must be called along
@@ -136,7 +164,7 @@ impl VoteContract {
     pub fn close(env: Env, admin: Address, winner: Symbol) -> Poll {
         admin.require_auth();
         let mut poll = Self::view_poll(env.clone());
-        let key = env.storage().instance().get(&Registry::Admin).unwrap_or(0);
+        let key = env.storage().instance().get(&Registry::Admin(admin)).unwrap_or(0);
         if key == 0 {
             panic!("Invalid admin");
         }
