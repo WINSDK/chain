@@ -7,6 +7,7 @@ import marketData from "../data/markets.json";
 import Counter from "../components/Counter.astro";
 import { CallContract, CallContractData } from "../../utils/contract_caller";
 import { Contract, Networks, nativeToScVal, Keypair, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
+import Modal from '../components/Modal.astro';
 
 
 // initialise server into state (do this just once)
@@ -101,7 +102,18 @@ if (helloResponse == null) {
 			href=""
 			title="Sample Betting"
 			body="Make your first bet here"
+		
+		
 		/>
+
+		<Modal id='myModal' open='Open Modal'>
+			<main slot='main' class="modal_text">
+				<h2 class="modal_header">Welcome to My Modal!</h2>
+				<p>This is some content inside the modal.</p>
+				
+			</main>
+			<button slot='close'>Close Modal</button>
+		</Modal>
 
 		<App />
 
@@ -146,6 +158,14 @@ if (helloResponse == null) {
 		color: white;
 		font-size: 20px;
 		line-height: 1.6;
+	}
+	.modal_text {
+		color: blue;
+		font-size: 20px;
+	}
+	.modal_header {
+		color: purple;
+		font-size: 28px;
 	}
 	.astro-a {
 		position: absolute;
