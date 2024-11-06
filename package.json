@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "vite-plugin-node-polyfills": "^0.22.0"
+  },
+  "dependencies": {
+    "@ant-design/react-slick": "^1.1.2",
+    "@astrojs/react": "^3.6.2",
+    "@astrojs/tailwind": "^5.1.2",
+    "react-slick": "^0.30.2",
+    "slick-carousel": "^1.8.1",
+    "sync-exec": "^0.6.2"
+  }
+}
