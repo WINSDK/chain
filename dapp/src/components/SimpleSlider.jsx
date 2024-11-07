@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import Modal from "./Modal_clone";
 import Slider from '@ant-design/react-slick';
+import BetForm from "./BetForm";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import marketData from "../data/markets.json";
 
-
 const SimpleSlider = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [selectedMarket, setSelectedMarket] = useState(null);
+  const singleVoteFee = 4 / 10000;
 
   var settings = {
     dots: true,
@@ -35,6 +36,10 @@ const SimpleSlider = () => {
     title: {
         color: 'purple',
         fontSize: '36px',
+    },
+    subheader: {
+      color: 'white',
+      fontSize: '28px',
     },
     description: {
       color: 'gray',
@@ -67,9 +72,9 @@ return (
                                 <li key={index}>
                                   <h3>{option}</h3>
                                   <div className='p-6 bg-orange-300 p-2 rounded-lg'>
-                                  <p className='font-semibold text-white text-center'>
+                                    <p className='font-semibold text-white text-center'>
                                       ({market.betPercentage[index]}%)
-                                      </p>
+                                    </p>
                                   </div>
                                 </li>
                               ))}
@@ -93,12 +98,15 @@ return (
                             <ul className='font-semibold text-white text-center unstyled'>
                            {selectedMarket.betOptions.map((option, index) => (
                                 <li key={index}>
-                                  <h3>{option}</h3>
-                                  <div className='p-6 bg-orange-300 p-2 rounded-lg'>
-                                  <p className='font-semibold text-white text-center'>
-                                      ({selectedMarket.betPercentage[index]}%)
-                                      </p>
+                                  <h3 style={styles.subheader}>
+                                    {option}  ({selectedMarket.betPercentage[index]}%)
+                                  </h3>
+                                  <div className='p-6 bg-purple-300 p-2 rounded-lg'>
+                                    <p>
+                                      Cost per vote: {selectedMarket.betPercentage[index].toFixed(5) / 1000 + singleVoteFee} ETH
+                                    </p>
                                   </div>
+                                  <br />
                                 </li>
                               ))}
                             </ul>
@@ -108,7 +116,8 @@ return (
                       <br />
 
                       <h2 style={styles.title}>Place your bet below: </h2>
-
+                      <br />
+                      <BetForm betOptions={selectedMarket.betOptions} betPercentage={selectedMarket.betPercentage} />
                       <br />
                   </>
               )}
