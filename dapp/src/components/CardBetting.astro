@@ -1,0 +1,121 @@
+---
+interface Props {
+    title: string;
+    body: string;
+    href: string;
+}
+
+const { id, open } = Astro.props;
+const { title, body } = Astro.props;
+---
+
+<li class="link-card">
+    <a href="#">
+        <h2>
+            {title}
+            <span>&rarr;</span>
+        </h2>
+        <p>{body}</p>
+        <br />
+        <button type="button" onclick={`document.getElementById('${id}').showModal()`}>
+            {open}
+        </button>
+    </a>
+    
+    <dialog id={id} class="modal">
+        <div class="modal-content">
+            <slot name="main" />
+            <form method="dialog">
+                <button type="submit">Close</button>
+            </form>
+        </div>
+    </dialog>
+</li>
+
+
+<script>
+    const dialog = document.getElementById("{id}");
+    
+    // Function to close dialog when clicking outside
+    function closeDialogOnClickOutside(event) {
+        if (event.target === dialog) {
+            dialog.close();
+        }
+    }
+
+    // Add event listener when dialog is shown
+    dialog.addEventListener("show", () => {
+        dialog.addEventListener("click", closeDialogOnClickOutside);
+    });
+
+    // Remove event listener when dialog is closed
+    dialog.addEventListener("close", () => {
+        dialog.removeEventListener("click", closeDialogOnClickOutside);
+    });
+</script>
+
+<style lang="scss">
+    .modal {
+        width: 75vw; /* 75% of viewport width */
+        height: 95vh; /* 95% of viewport height */
+        max-width: none;
+        max-height: none;
+        color: #BBBBBB; /* Font color for all text inside the modal */
+        background-color: rgba(191, 191, 191, 0.95);
+    }
+
+    .modal-content {
+        padding: 20px; /* Add padding for content */
+    }
+
+    .modal h2, .modal p {
+        color: #999999; /* Specific color for headings and paragraphs */
+    }
+
+    .modal::backdrop {
+        background: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+    }
+</style>
+
+<style>
+    .link-card {
+        list-style: none;
+        display: flex;
+        padding: 1px;
+        background-color: #23262d;
+        border-radius: 7px;
+        transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    
+    .link-card > a {
+        width: 100%;
+        text-decoration: none;
+        line-height: 1.4;
+        padding: calc(1.5rem - 1px);
+        border-radius: 8px;
+        color: orange;
+        opacity: 0.8;
+    }
+
+    h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        color: orange;
+    }
+
+    p {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+        color: orange;
+    }
+
+    .link-card:is(:hover, :focus-within) {
+        background-position: 0;
+    }
+
+    .link-card:is(:hover, :focus-within) h2 {
+        color: rgb(var(--accent-light));
+    }
+</style>

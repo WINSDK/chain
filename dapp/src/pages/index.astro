@@ -1,13 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
+import CardBetting from "../components/CardBetting.astro";
 import ConnectWallet from "../components/ConnectWallet.astro";
 import App from "../pages/App.astro";
 import marketData from "../data/markets.json";
 import Counter from "../components/Counter.astro";
 import { CallContract, CallContractData } from "../../utils/contract_caller";
 import { Contract, Networks, nativeToScVal, Keypair, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
-import Modal from '../components/Modal.astro';
+
 
 
 // initialise server into state (do this just once)
@@ -98,22 +99,26 @@ if (helloResponse == null) {
 			body="Learn about the inner workings of a prediction contract after the expiry time has elapsed! ⌛"
 		/>
 
-			<Card
-			href=""
-			title="Sample Betting"
-			body="Make your first bet here"
-		
-		
-		/>
 
-		<Modal id='myModal' open='Open Modal'>
-			<main slot='main' class="modal_text">
-				<h2 class="modal_header">Welcome to My Modal!</h2>
-				<p>This is some content inside the modal.</p>
-				
-			</main>
-			<button slot='close'>Close Modal</button>
-		</Modal>
+		<CardBetting
+			title="Bet on this market now!"
+			body=""
+			id="dialog"
+			open="View betting market"
+		>
+
+			<betting_modal slot="main">
+				<h2 class="modal_header">Betting market title</h2>
+				<hr />
+				<p class="modal_text">Some extra content you would like here</p>
+				<hr />
+				<br />
+			</betting_modal>
+			<button slot="close">Close modal</button>
+
+		</CardBetting>
+
+
 
 		<App />
 
@@ -156,6 +161,16 @@ if (helloResponse == null) {
 		width: 800px;
 		max-width: calc(100% - 2rem);
 		color: white;
+		font-size: 20px;
+		line-height: 1.6;
+	}
+	
+	betting_modal {
+		margin: auto;
+		padding: 1rem;
+		width: 800px;
+		max-width: calc(100% - 2rem);
+		color: blue;
 		font-size: 20px;
 		line-height: 1.6;
 	}
