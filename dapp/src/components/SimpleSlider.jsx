@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
+import Modal from "./Modal_clone";
 import Slider from '@ant-design/react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import marketData from "../data/markets.json"
+import marketData from "../data/markets.json";
+
 
 const SimpleSlider = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [selectedMarket, setSelectedMarket] = useState(null);
+
   var settings = {
     dots: true,
     infinite: true,
@@ -12,51 +17,106 @@ const SimpleSlider = () => {
     slidesToShow: 3,
     slidesToScroll: 3
   };
-  return (
-        <div className='h-screen bg-slate-700 my-10'>
-      <div className='w-4/8 mx-8 my-4 '>
-      <Slider {...settings}>
-    {
-            marketData.map((marketData, index) => {
-            return (
-                <div style="margin: 0 20px;" className="bg-slate-700 p-2">
-                <div key={index} className='bg-white p-2 rounded-lg h-screen'>
-                  <div>
-                    <img src={marketData.imageUrl} />
-                  </div>
-                  <div>
-                      <p className='font-semibold text-black text-center'>
-                        {marketData.title} 
-                    </p>
-                  </div>
-                  <div className='p-6 bg-blue-600 p-2'>
-                    <p className='font-semibold text-white text-center'>
-                        {marketData.description}
-                        </p>
-                    </div>
-                    <div className='p-6 bg-gray-500 p-2'>
-                    <ul className='font-semibold text-white text-center unstyled'>
-                        {marketData.betOptions.map((option, index) => (
-                        <li key={index}>
-                          <h3>{option}</h3>
-                          <div className='p-6 bg-orange-400 p-2 rounded-lg'>
-                          <p className='font-semibold text-white text-center'>
-                              ({marketData.betPercentage[index]}%)
-                              </p>
+
+  const openModal = (market) => {
+    setSelectedMarket(market); // Set the selected market data
+    setIsModalOpen(true); // Open the modal
+    // print("selected market: ", market)
+    // console.log("selected market: ", market)
+  };
+
+  const styles = {
+    container: {
+        margin: '20px',
+        padding: '10px',
+        backgroundColor: 'lightblue',
+        borderRadius: '5px',
+    },
+    title: {
+        color: 'purple',
+        fontSize: '36px',
+    },
+    description: {
+      color: 'gray',
+      fontSize: '24px',
+  },
+};
+
+return (
+  <div className='h-screen bg-slate-700 my-10'>
+      <div className='w-4/8 mx-8 my-4'>
+          <Slider {...settings}>
+              {marketData.map((market, index) => (
+                  <div key={index} style={{ margin: "0 20px" }} className="bg-slate-700 p-2">
+                      <div className='bg-white p-2 rounded-lg h-screen'>
+                          <img src={market.imageUrl} alt={market.title} />
+                          <p className='font-semibold text-black text-center'>{market.title}</p>
+                          <div className='p-6 bg-blue-600 p-2'>
+                              <p className='font-semibold text-white text-center'>{market.description}</p>
                           </div>
-                        </li>
-                      ))}
-                    </ul>
-                    </div>
-                </div>
-                </div>
-            );
-            })
-        }  
-        </Slider>
+                          {/* Button to open modal with corresponding market data */}
+                          <button 
+                              onClick={() => openModal(market)} // Pass the current market object
+                              className="my-4 mx-10 bg-green-600 text-white py-2 rounded"
+                          >
+                              View Details
+                          </button>
+                          <div className='p-6 bg-gray-500 p-2'>
+                            <ul className='font-semibold text-white text-center unstyled'>
+                           {market.betOptions.map((option, index) => (
+                                <li key={index}>
+                                  <h3>{option}</h3>
+                                  <div className='p-6 bg-orange-300 p-2 rounded-lg'>
+                                  <p className='font-semibold text-white text-center'>
+                                      ({market.betPercentage[index]}%)
+                                      </p>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                      </div>
+                  </div>
+              ))}
+          </Slider>
+
+          {/* Modal Component */}
+          <Modal id="market-modal" isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} open="Open Modal">
+              {selectedMarket && ( // Render content only if a market is selected
+                  <>
+
+                  <h2 style={styles.title}>{selectedMarket.title}</h2>
+                  <p style={styles.description}>{selectedMarket.description}</p>
+                  <br/>
+                      <div className='p-6 bg-gray-700'>
+                      <br />
+                            <ul className='font-semibold text-white text-center unstyled'>
+                           {selectedMarket.betOptions.map((option, index) => (
+                                <li key={index}>
+                                  <h3>{option}</h3>
+                                  <div className='p-6 bg-orange-300 p-2 rounded-lg'>
+                                  <p className='font-semibold text-white text-center'>
+                                      ({selectedMarket.betPercentage[index]}%)
+                                      </p>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                      <img src={selectedMarket.imageUrl} alt={selectedMarket.title} />
+                      <br />
+
+                      <h2 style={styles.title}>Place your bet below: </h2>
+
+                      <br />
+                  </>
+              )}
+          </Modal>
       </div>
-    </div>    
-  );
+  </div>    
+);
 }
+
 
 export default SimpleSlider;

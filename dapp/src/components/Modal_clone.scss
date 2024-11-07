@@ -1,0 +1,22 @@
+.modal {
+    width: 75vw; /* 75% of viewport width */
+    height: 95vh; /* 95% of viewport height */
+    max-width: none;
+    max-height: none;
+  
+    /* Change the font color for all text inside the modal */
+    color: #666666; /* Replace with your desired color */
+  }
+  
+  .modal h2,
+  .modal p {
+    color: #333333; /* Specific color for headings and paragraphs */
+  }
+  
+  .modal::backdrop {
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+  }
+  
+  .modal-content {
+    padding: 20px; /* Add padding for content */
+  }
