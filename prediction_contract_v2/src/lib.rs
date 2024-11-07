@@ -22,8 +22,6 @@ pub struct PredictionRecord {
     pub winner: Symbol,
 }
 
-const PRED: Symbol = symbol_short!("PRED");
-
 #[contracttype]
 #[derive(Clone)]
 // struct for admin address

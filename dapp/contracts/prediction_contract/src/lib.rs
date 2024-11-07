@@ -22,8 +22,6 @@ pub struct PredictionRecord {
     pub winner: Symbol,
 }
 
-const PRED: Symbol = symbol_short!("PRED");
-
 #[contracttype]
 #[derive(Clone)]
 // struct for admin address
@@ -208,26 +206,24 @@ impl VoteContract {
             // allocate XLM payments from current pool, based on user's vote 
             // proportion of total, since each vote means a certain amount bet
             // formula = voter's full vote amount + proportion of votes from the losing pool
-            let opt1_votes: f64 = poll.opt_1 as f64;
-            let opt2_votes: f64 = poll.opt_2 as f64;
-            let user_votes: f64 = records.votes as f64;
+            let opt1_votes: i128 = poll.opt_1 as i128;
+            let opt2_votes: i128 = poll.opt_2 as i128;
+            let user_votes: i128 = records.votes as i128;
 
+            // note that precision is limited due to rounding
             if poll.winner == records.selected {
                 if records.selected == OPT1 {
-                    let ratio = user_votes / opt1_votes;
-                    let mut payout: f64 = ratio * opt2_votes;
+                    let mut payout: i128 = (user_votes * opt2_votes) * opt1_votes;
                     payout += user_votes;
                     let final_pay: i128 = payout as i128;
                     client.transfer(&contract, &user, &final_pay);
                 }
                 else {
-                    let ratio = user_votes / opt2_votes;
-                    let mut payout: f64 = ratio * opt1_votes;
+                    let mut payout: i128 = (user_votes * opt1_votes) * opt2_votes;
                     payout += user_votes;
                     let final_pay: i128 = payout as i128;
                     client.transfer(&contract, &user, &final_pay);
                 }
-                
             }
             else {
                 panic!("No valid claimings");

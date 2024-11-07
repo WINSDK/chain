@@ -753,6 +753,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "prediction-contract"
+version = "0.1.0"
+dependencies = [
+ "soroban-sdk",
+]
+
+[[package]]
 name = "prettyplease"
 version = "0.2.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
