@@ -76,12 +76,12 @@ const formatInt = (int) => {
 };
 
 return (
-  <div className='h-screen bg-slate-700 my-10'>
+  <div className='h-screen/3 bg-yellow-700 my-10'>
       <div className='w-4/8 mx-8 my-4'>
           <Slider {...settings}>
               {marketData.map((market, index) => (
-                  <div key={index} style={{ margin: "0 20px" }} className="bg-slate-700 p-2">
-                      <div className='bg-white p-2 rounded-lg h-screen'>
+                  <div key={index} style={{ margin: "0 20px" }} className="bg-yellow-700 p-2">
+                      <div className='bg-white p-2 rounded-lg h-screen/3'>
                           {/* <img src={market.imageUrl} alt={market.title} /> */}
                           <p className='font-semibold text-black text-center'>{market.title}</p>
                           <div className='p-6 bg-blue-600 p-2'>
@@ -93,20 +93,7 @@ return (
                           >
                               View Details
                           </button>
-                          <div className='p-6 bg-gray-500 p-2'>
-                            <ul className='font-semibold text-white text-center unstyled'>
-                           {market.betOptions.map((option, index) => (
-                                <li key={index}>
-                                  <h3>{option}</h3>
-                                  <div className='p-6 bg-orange-300 p-2 rounded-lg'>
-                                    <p className='font-semibold text-white text-center'>
-                                      ({market.betPercentage[index]}%)
-                                    </p>
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+                          
                       </div>
                   </div>
               ))}
