@@ -1,5 +1,6 @@
 import Types from '@stellar/freighter-api';
-import { Asset, Contract, BASE_FEE, SorobanRpc, Transaction, TransactionBuilder, Account, Address, xdr, Keypair, Operation, } from "@stellar/stellar-sdk";
+import { Asset, Contract, BASE_FEE, SorobanRpc, Transaction, TransactionBuilder, Account, Address, xdr, Keypair, Operation, Networks, nativeToScVal, scValToNative } from "@stellar/stellar-sdk";
+import { getAddress, signTransaction } from '@stellar/freighter-api';
 import exec from 'sync-exec';
 
 // Function to execute and log shell commands
@@ -95,9 +96,6 @@ export async function CallSignContract(
     method: string,
     ...params: xdr.ScVal[]
 ) {
-    // server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
-    // sourceAcc = await server.getAccount((await Types.getAddress()).address);
-    // sourceContract = new Contract(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID);
     // builds, signs and sends the transaction
     const tx = new TransactionBuilder(sourceAcc, {
         fee: BASE_FEE,
@@ -108,8 +106,9 @@ export async function CallSignContract(
     .build();
     
     const prepTx = await server.prepareTransaction(tx);
-    const signedXdr  = await Types.signTransaction(prepTx.toEnvelope().toXDR("base64"), {
-        networkPassphrase: networkPass
+    const signedXdr = await Types.signTransaction(prepTx.toXDR(), {
+        networkPassphrase: networkPass,
+        address: sourceAcc.accountId()
     });
     alert("Tx signed successfully.");
 
@@ -168,9 +167,6 @@ export async function CallPayment(
     sendAmount: string,
     sendAsset: Asset,
 ) {
-    if (sendAsset.issuer == null) {
-        sendAsset = Asset.native();
-    }
     const tx = new TransactionBuilder(sourceAcc, {
         fee: BASE_FEE,
         networkPassphrase: networkPass,
@@ -183,8 +179,9 @@ export async function CallPayment(
     .setTimeout(30)
     .build();
     const prepTx = await server.prepareTransaction(tx);
-    const signedXdr  = await Types.signTransaction(prepTx.toEnvelope().toXDR("base64"), {
-        networkPassphrase: networkPass
+    const signedXdr = await Types.signTransaction(prepTx.toXDR(), {
+        networkPassphrase: networkPass,
+        address: sourceAcc.accountId()
     });
     alert("Tx signed successfully.");
 
@@ -237,17 +234,178 @@ export async function CallContractData(contractId: string, symbolText: string) {
         })
         let json = await res.json()
         const dataArr = json.result.entries;
+        console.log(dataArr);
 
         // get the xdr, parse from the base64 string
         const parsed = xdr.LedgerEntryData.fromXDR((dataArr[0].xdr.toString()), "base64");
         // const key = parsed['_value']['_attributes']['key']['_value'];
         const val = parsed['_value']['_attributes']['val']['_value'];
 
-        // console.log(Buffer.from(key.buffer).toString());
         return val;
     }
     catch (err) {
         console.log("CallContractData:", err);
         return null;
+    }
+}
+
+/*
+* These functions will be called by the dapp frontend to interact with the
+* prediction contract. After building the invocations, the functions above
+*  will be called to send the transaction needed.
+*/
+
+// define objects corresponding to the return structs (for reference)
+interface Prediction {
+    has_init: number,
+    start_t: number,
+    end_t: number,
+    opt_1: number,
+    opt_2: number,
+    total: number,
+    winner: string,
+}
+
+interface Voter {
+    selected: string,
+    time: number,
+    votes: number,
+}
+
+// define enum for OPT1 and OPT2 selections 
+enum Selections {
+    OPT1 = 'OPT1',
+    OPT2 = 'OPT2',
+}
+
+// invokes view_predictions to retrieve the PredictionRecord data
+export async function ViewPredictionData(contractId: string) {
+    // initialise server and contract
+    const server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
+    const predictionContract = new Contract(contractId);
+    const kp = Keypair.fromSecret(import.meta.env.PUBLIC_SOROBAN_SECRET);
+    const account = await server.getAccount(kp.publicKey());
+
+    if (kp.publicKey() == undefined) {
+        alert("Problem retrieving address from backend!");
+        return;
+    }
+
+    // builds, signs and sends the transaction using the test account keypair
+    const contractResp = await CallContract(
+        account,
+        kp,
+        Networks.TESTNET,
+        server,
+        predictionContract,
+        "view_predictions",
+    );
+    if (contractResp == null) {
+        alert("Issue with invoking view_prediction()");
+    } else {
+        // parse result
+        let result = scValToNative(contractResp);
+        console.log(result);
+        return result;
+    }
+}
+
+// invokes view_voter to retrieve the Record data for the current Freighter address
+export async function ViewVoter(contractId: string) {
+    // initialise server and contract
+    const server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
+    const predictionContract = new Contract(contractId);
+    const kp = Keypair.fromSecret(import.meta.env.PUBLIC_SOROBAN_SECRET);
+    const account = await server.getAccount(kp.publicKey());
+    const addressObj = await getAddress();
+
+    if (kp.publicKey() == undefined) {
+        alert("Problem retrieving address from backend!");
+        return;
+    }
+    else if (addressObj.error) {
+        alert("Problem retrieving address from Freighter! Please check the extension.");
+        return;
+    }
+
+    // marshal voter address string into to ScVal
+    const voterAddress = Address.fromString(addressObj.address).toScVal();
+
+    // builds, signs and sends the transaction using the test account keypair
+    const contractResp = await CallContract(
+        account,
+        kp,
+        Networks.TESTNET,
+        server,
+        predictionContract,
+        "view_voter",
+        voterAddress
+    );
+    if (contractResp == null) {
+        alert("Issue with invoking view_voter()");
+    } else {
+        // parse result
+        let result = scValToNative(contractResp);
+        console.log(result);
+        return result;
+    }
+}
+
+// invokes record_votes to send the vote to the ledger, then invokes CallPayment
+// for the user to send the required XLM to the contract
+export async function RecordVotes(contractId: string, adminId: string, selected: string, votes: number) {
+    if (!(Object.values(Selections).includes(selected as Selections))) {
+        console.log("input must be OPT1 or OPT2");
+    }
+    else {
+        // initialise server and contract
+        const server = new SorobanRpc.Server(import.meta.env.PUBLIC_SOROBAN_RPC_URL);
+        const predictionContract = new Contract(contractId);
+        // get voter address from Freighter
+        const addressObj = await getAddress();
+        if (addressObj.error) {
+            alert("Problem retrieving address from Freighter! Please check the extension.");
+            return;
+        }
+        // initialise test account for non-transaction calls
+        const account = await server.getAccount(addressObj.address);
+        // marshal voter address string into to ScVal
+        const voterAddress = Address.fromString(addressObj.address).toScVal();
+
+        const contractResp = await CallSignContract(
+            account,
+            Networks.TESTNET,
+            server,
+            predictionContract,
+            "record_votes",
+            voterAddress,
+            nativeToScVal(selected, {type:"symbol"}),
+            nativeToScVal(votes, {type:"u64"}),
+        )
+        if (contractResp == null) {
+            console.log("selected:", selected);
+            console.log("votes:", votes);
+            alert("Issue with invoking record_votes()");
+        } else {
+            alert(JSON.stringify(contractResp));
+            console.log(contractResp);
+        }
+
+        // send payment to contract admin in native XLM corresponding to sent votes
+        const sendAmount = votes.toString();
+        const paymentResp = await CallPayment(
+            account,
+            Networks.TESTNET,
+            server,
+            adminId,
+            sendAmount,
+            Asset.native(),
+        )
+        if (paymentResp == null) {
+            alert("Issue with sending payment");
+        } else {
+            alert(JSON.stringify(paymentResp));
+            console.log(paymentResp);
+        }
     }
 }

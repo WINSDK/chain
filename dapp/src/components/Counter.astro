@@ -3,13 +3,12 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
 <button data-increment aria-controls="current-value">Increment</button>
 <button data-decrement aria-controls="current-value">Decrement</button>
 
-<button data-poll>Poll Events</button>
+<button data-poll>Test!</button>
 
 <script>
     import { Contract, Networks, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
     import { getAddress } from '@stellar/freighter-api';
-    import { CallSignContract, CallContractData } from "../../utils/contract_caller";
-    import { CallEvents } from "../../utils/event_caller";
+    import { CallSignContract, CallContractData, ViewPredictionData, ViewVoter, RecordVotes } from "../../utils/contract_caller";
     import { getPubKey } from "../../utils/state";
 
     const currentValue = document.querySelector("#current-value") as HTMLElement;
@@ -55,7 +54,7 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
             networkPass,
             server!,
             incContract,
-            "increment"
+            "increment",
         )
 
         // handle response
@@ -98,7 +97,7 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
             networkPass,
             server!,
             incContract,
-            "decrement"
+            "decrement",
         )
 
         // handle response
@@ -113,21 +112,22 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
     }
 
     async function handlePollEvents() {
-        console.log("Counter.astro PollEvents script fired");
+        console.log("Counter.astro Testing script fired");
 
         pollButton.disabled = true;
         pollButton.classList.add("loading");
 
-        // TODO: remove hard-coding on the event topics and search window!
-
-        const pollResponse = await CallEvents(import.meta.env.PUBLIC_INCREMENT_CONTRACT_ID, ['COUNTER', 'increment'], '10000');
-
-        // handle response
-        if (pollResponse == null) {
-            alert('Error polling events.')
-        } else {
-            alert(String(pollResponse));
-        }
+        // for testing purposes, delete after
+        const viewPoll = await ViewPredictionData("CC5JMEAYJP6VUSBFW6II2E66XZZZJ6ZXRM3HPHJMJ7JLT6NLVTZ3BDJL");
+        const viewVoter = await ViewVoter("CC5JMEAYJP6VUSBFW6II2E66XZZZJ6ZXRM3HPHJMJ7JLT6NLVTZ3BDJL");
+        /*
+        const sendPrediction = await RecordVotes(
+            "CC5JMEAYJP6VUSBFW6II2E66XZZZJ6ZXRM3HPHJMJ7JLT6NLVTZ3BDJL",
+            "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF",
+            "OPT2",
+            10
+        );
+        */
 
         pollButton.disabled = false;
         pollButton.classList.remove("loading");
