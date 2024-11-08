@@ -1,9 +1,8 @@
 <strong>Incrementor</strong><br/>
+Test your Freighter connection by sending an increment/decrement transaction.
 Current value: <strong id="current-value" aria-live="polite">???</strong><br/><br/>
 <button data-increment aria-controls="current-value">Increment</button>
 <button data-decrement aria-controls="current-value">Decrement</button>
-
-<button data-poll>Test!</button>
 
 <script>
     import { Contract, Networks, scValToNative, SorobanRpc } from "@stellar/stellar-sdk";
@@ -111,30 +110,7 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br/><b
         decButton.classList.remove("loading");
     }
 
-    async function handlePollEvents() {
-        console.log("Counter.astro Testing script fired");
-
-        pollButton.disabled = true;
-        pollButton.classList.add("loading");
-
-        // for testing purposes, delete after
-        const viewPoll = await ViewPredictionData("CC5JMEAYJP6VUSBFW6II2E66XZZZJ6ZXRM3HPHJMJ7JLT6NLVTZ3BDJL");
-        const viewVoter = await ViewVoter("CC5JMEAYJP6VUSBFW6II2E66XZZZJ6ZXRM3HPHJMJ7JLT6NLVTZ3BDJL");
-        /*
-        const sendPrediction = await RecordVotes(
-            "CC5JMEAYJP6VUSBFW6II2E66XZZZJ6ZXRM3HPHJMJ7JLT6NLVTZ3BDJL",
-            "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF",
-            "OPT2",
-            10
-        );
-        */
-
-        pollButton.disabled = false;
-        pollButton.classList.remove("loading");
-    }
-
     // map functions to button event listeners
     incButton.addEventListener("click", async () => handleIncCounter());
     decButton.addEventListener("click", async () => handleDecCounter());
-    pollButton.addEventListener("click", async () => handlePollEvents());
 </script>
