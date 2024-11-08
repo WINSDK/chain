@@ -1,12 +1,17 @@
 [
-    { "title": "Prediction Market 1", "imageUrl": "/images/1.jpg", "description": "What will the total damages be from Hurricane Helene by 31 October 2024? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 2", "imageUrl": "/images/2.jpg", "description": "Will there be another MRT breakdown in 2024? " , "betOptions": ["Yes", "No"], "betPercentage": [65.5, 34.5]},
-    { "title": "Prediction Market 3", "imageUrl": "/images/3.jpg", "description": "Who will win the US Presidential elections in 2024?", "betOptions": ["Republican Party", "Democratic Party" ,"Independent"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 4", "imageUrl": "/images/4.jpg", "description": "Which political party will take control of the US Congress in 2024? " , "betOptions": ["Republican Party", "Democratic Party", "Independent"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 5", "imageUrl": "/images/5.jpg", "description": "Which political party will take control of the US Senate in 2024? " , "betOptions": ["Republican Party", "Democratic Party", "Independent"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 6", "imageUrl": "/images/1.jpg", "description": "Which Constructor team will be victorious in the F1 Grand Prix 2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 7", "imageUrl": "/images/2.jpg", "description": "Which driver will lead in individual points in the F1 Grand Prix 2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 8", "imageUrl": "/images/3.jpg", "description": "Which team will win the UEFA Champions League in May 2025? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 9", "imageUrl": "./images/4.jpg", "description": "Which team will win La Liga 2024/2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]},
-    { "title": "Prediction Market 10","imageUrl": "/images/5.jpg", "description": "Who will win the Japanese elections? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25]}
+    { "title": "Prediction Market 1", "imageUrl": "/images/1.jpg", "description": "What will the total damages be from Hurricane Helene by 31 December 2024? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25],
+    "contractId": "CAAIZ6FO4YQW2EIVRCGFZH3TCX33KW37VMG4Z2FBMKHFJLBF6NJVKMZC",
+    "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"},
+    { "title": "Prediction Market 2", "imageUrl": "/images/2.jpg", "description": "Will there be another MRT breakdown in 2024? " , "betOptions": ["Yes", "No"], "betPercentage": [65.5, 34.5], 
+    "contractId": "CBOXESEVCKDV7PXPSPN6RJFXGRBGWLODNGD5SUZR37UPMDRQQ522XG2D",
+    "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"},
+    { "title": "Prediction Market 3", "imageUrl": "/images/1.jpg", "description": "Which Constructor team will be victorious in the F1 Grand Prix 2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25],
+    "contractId": "CDXIAFRSUF2PYKWBFDS3PPOUHEZ3FQMU55GPNXVUTJPESAGZFEV6HTPT",
+    "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"},
+    { "title": "Prediction Market 4", "imageUrl": "/images/2.jpg", "description": "Which driver will lead in individual points in the F1 Grand Prix 2025 season? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25],
+    "contractId": "CC6NGQ7T3EPLT7PX5MR4P2JBQBYB2LWYQVHX2ARPLPWVFGAFEBGYUKWB",
+    "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"},
+    { "title": "Prediction Market 5", "imageUrl": "/images/3.jpg", "description": "Which team will win the UEFA Champions League in May 2025? " , "betOptions": ["A", "B", "C"], "betPercentage": [40, 35, 25],
+    "contractId": "CBKBB6IFCC6EDALKXFQYTYNBKETISPV3MDP57PCDP4R62I3QB6UOUHHQ",
+    "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"}
 ]

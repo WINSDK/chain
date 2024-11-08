@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "./Modal_clone";
 import Slider from '@ant-design/react-slick';
 import BetForm from "./BetForm";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import marketData from "../data/markets.json";
+import { CallContract, ViewPredictionData } from "../../utils/contract_caller";
 
 const SimpleSlider = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [selectedMarket, setSelectedMarket] = useState(null);
+  const [contractData, setContractData] = useState(null); 
+  const [loading, setLoading] = useState(true);
 
   var settings = {
     dots: true,
@@ -18,11 +21,38 @@ const SimpleSlider = () => {
     slidesToScroll: 3
   };
 
-  const openModal = (market) => {
-    setSelectedMarket(market); // Set the selected market data
-    setIsModalOpen(true); // Open the modal
-    // console.log("selected market: ", market)
+  // Async function to fetch data from contract
+  const fetchContractData = async (contractId) => {
+    try {
+      console.log("passed in contract id: ", contractId);
+      // const response = await CallContract(contractId);
+      const response = await ViewPredictionData(contractId);
+      setContractData(response);
+    } catch (error) {
+      console.error("Error fetching contract data:", error);
+    } finally {
+      setLoading(false); 
+    } 
   };
+
+  const openModal = async (market) => {
+    setSelectedMarket(market); // Set the selected market data
+    await fetchContractData(market.contractId);
+    setIsModalOpen(true); // Open the modal
+  };
+
+  useEffect(() => {
+    fetchContractData();
+  }, []); 
+
+  const formatDateTime = (timestamp) => {
+    const date = new Date(parseInt(timestamp) * 1000); // Convert seconds to milliseconds
+    return date.toLocaleString(); // Format as a local date string
+};
+
+const formatInt = (int) => {
+  return parseInt(int);
+};
 
   const styles = {
     container: {
@@ -57,7 +87,6 @@ return (
                           <div className='p-6 bg-blue-600 p-2'>
                               <p className='font-semibold text-white text-center'>{market.description}</p>
                           </div>
-                          {/* Button to open modal with corresponding market data */}
                           <button 
                               onClick={() => openModal(market)} // Pass the current market object
                               className="my-4 mx-10 bg-green-600 text-white py-2 rounded"
@@ -111,6 +140,35 @@ return (
                               ))}
                             </ul>
                           </div>
+
+                          <div>
+                            <br />
+                          {loading ? (
+                              <p>Loading...</p>
+                          ) : (
+                              contractData && (
+                                  <>
+                                      <h3 style={styles.title}>Data from Contract:</h3>
+                                      <pre>
+                                         {Object.entries(contractData).map(([key, value]) => {
+                                          // Check if the key is 'start_t'/'end_t' and format it
+                                          const displayValue = key === 'start_t' | key === 'end_t' ? formatDateTime(value) : formatInt(value);
+                                          const relabelKey = key === 'start_t' ? 'Start Time' : key === 'end_t' ? 'End Time' 
+                                          : key ==='opt_1' ? 'Option 1'
+                                          : key ==='opt_2' ? 'Option 2'
+                                          : key ==='total' ? 'Total'                                          
+                                          : key;
+                                          return (
+                                              <div key={key}>
+                                                  <strong>{relabelKey}:</strong> {displayValue}
+                                              </div>
+                                          );
+                                      })}
+                                      </pre>
+                                  </>
+                              )
+                          )}
+                      </div>
 
                       {/* <img src={selectedMarket.imageUrl} alt={selectedMarket.title} /> */}
                       <br />
