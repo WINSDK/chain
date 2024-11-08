@@ -21,7 +21,6 @@ const SimpleSlider = () => {
   const openModal = (market) => {
     setSelectedMarket(market); // Set the selected market data
     setIsModalOpen(true); // Open the modal
-    // print("selected market: ", market)
     // console.log("selected market: ", market)
   };
 
@@ -91,6 +90,17 @@ return (
 
                   <h2 style={styles.title}>{selectedMarket.title}</h2>
                   <p style={styles.description}>{selectedMarket.description}</p>
+                  <br />
+                      <div className="mx-10 text-center">
+                        <button 
+                            // To invoke function to claim betting rewards (after market has expired/concluded)
+                            // onClick={() => claimReward(contract, selectedMarket)} 
+                            className="my-4 mx-10 bg-orange-600 text-white py-2 rounded"
+                        >
+                            Claim Reward
+                        </button>
+                      </div>
+                      <hr />
                   <br/>
                       <div className='p-6 bg-gray-700'>
                       <br />
@@ -102,7 +112,7 @@ return (
                                   </h3>
                                   <div className='p-6 bg-purple-300 p-2 rounded-lg'>
                                     <p>
-                                      Cost per vote: {selectedMarket.betPercentage[index].toFixed(5) / 1000 + singleVoteFee} ETH
+                                      Cost per vote: {selectedMarket.betPercentage[index].toFixed(5) / 1000} ETH
                                     </p>
                                   </div>
                                   <br />
