@@ -9,7 +9,6 @@ import marketData from "../data/markets.json";
 const SimpleSlider = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [selectedMarket, setSelectedMarket] = useState(null);
-  const singleVoteFee = 4 / 10000;
 
   var settings = {
     dots: true,

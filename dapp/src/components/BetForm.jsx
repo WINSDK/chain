@@ -5,7 +5,6 @@ function BetForm({ betOptions, betPercentage }) {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [inputValue, setInputValue] = useState('');
     const [betAmount, setBetAmount] = useState('');
-    const singleVoteFee = 4 / 10000;
     const [votesToBet, setVotesToBet] = useState('');
   
     const handleOptionChange = (event) => {
@@ -13,16 +12,15 @@ function BetForm({ betOptions, betPercentage }) {
         setSelectedOption(event.target.value);
         setSelectedIndex(selectedIndex);
 
-        const voteCost = betPercentage[selectedIndex] + singleVoteFee;
-        setBetAmount(voteCost);
+        setBetAmount(betPercentage[selectedIndex]);
         setVotesToBet(inputValue / betAmount);
       };
   
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
-        const voteCost = betPercentage[selectedIndex] + singleVoteFee;
-        setBetAmount(voteCost);
+        setBetAmount(betPercentage[selectedIndex]);
         setVotesToBet(inputValue / betAmount);
+
     };
 
   const styles = {
