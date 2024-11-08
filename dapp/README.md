@@ -24,3 +24,12 @@ Clean node modules:
 
 You need to have [stellar-cli](https://developers.stellar.org/docs/build/smart-contracts/getting-started/setup#install-the-stellar-cli) set up on your end to interact with the testnet.
 This dapp also requires the [Freighter](https://www.freighter.app/) wallet extension for users to sign transactions.
+
+# Admin Setup
+
+Each prediction market is a contract that must be deployed and initalised by an admin account. The initialisation
+script will add a new entry in [markets.json](src/data/markets.json).
+- configure admin keypair in `.env`.
+- run the [utils/account_setup.ts](utils/account_setup.ts) script in a bash terminal.
+
+![alt text](image.png)

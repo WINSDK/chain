@@ -2,12 +2,13 @@
 block chain class assignment
 
 
-For each contract, run the following to deploy to testnet
+For each contract, run the following to deploy to testnet and initialise:
 
-1) stellar contract optimize
-2) stellar contract deploy
-3) stellar contract invoke
-4) stellar contract init
+1) add admin keypair in .env
+2) run the script in dapp/util/account_setup.ts
+3) start the dapp
+
+Check the /dapp README for more instructions.
 
 How to generate test account:
 * stellar keys generate --global me --network testnet
