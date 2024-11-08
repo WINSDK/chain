@@ -52,7 +52,7 @@ return (
               {marketData.map((market, index) => (
                   <div key={index} style={{ margin: "0 20px" }} className="bg-slate-700 p-2">
                       <div className='bg-white p-2 rounded-lg h-screen'>
-                          <img src={market.imageUrl} alt={market.title} />
+                          {/* <img src={market.imageUrl} alt={market.title} /> */}
                           <p className='font-semibold text-black text-center'>{market.title}</p>
                           <div className='p-6 bg-blue-600 p-2'>
                               <p className='font-semibold text-white text-center'>{market.description}</p>
@@ -121,7 +121,7 @@ return (
                             </ul>
                           </div>
 
-                      <img src={selectedMarket.imageUrl} alt={selectedMarket.title} />
+                      {/* <img src={selectedMarket.imageUrl} alt={selectedMarket.title} /> */}
                       <br />
 
                       <h2 style={styles.title}>Place your bet below: </h2>
