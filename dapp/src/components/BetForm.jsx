@@ -6,20 +6,28 @@ function BetForm({ betOptions, betPercentage }) {
     const [inputValue, setInputValue] = useState('');
     const [betAmount, setBetAmount] = useState('');
     const [votesToBet, setVotesToBet] = useState('');
+    
   
     const handleOptionChange = (event) => {
         const selectedIndex = betOptions.indexOf(event.target.value); // Find index of selected option
         setSelectedOption(event.target.value);
         setSelectedIndex(selectedIndex);
 
-        setBetAmount(betPercentage[selectedIndex] / 100);
-        setVotesToBet(inputValue * (betPercentage[selectedIndex] / 100));
+        setBetAmount(betPercentage[selectedIndex]);
+        setVotesToBet(inputValue * (betPercentage[selectedIndex]));
       };
   
     const handleInputChange = (event) => {
-        setInputValue(event.target.value);
-        setBetAmount(betPercentage[selectedIndex] / 100);
-        setVotesToBet(inputValue * (betPercentage[selectedIndex] / 100));
+        const value = event.target.value;
+        // Check if the input is an integer
+        if (/^\d+$/.test(value)) {
+          setInputValue(value);
+        } else {
+          // Handle invalid input, e.g., display an error message
+          console.error('Invalid input: Please enter an integer');
+        }
+        setBetAmount(betPercentage[selectedIndex]);
+        setVotesToBet(inputValue * (betPercentage[selectedIndex]));
 
     };
 
@@ -51,7 +59,7 @@ function BetForm({ betOptions, betPercentage }) {
         ))}
       <br />
         <div>
-            <input type="text" value={inputValue} onChange={handleInputChange} placeholder="Enter your bet amount" />
+            <input type="number" value={inputValue} onChange={handleInputChange} placeholder="Only integers" defaultValue={1} />
         </div>
       <br />
         <button type="button" onClick={handleSubmit}> Place Bet</button>
@@ -61,7 +69,7 @@ function BetForm({ betOptions, betPercentage }) {
             <br />
             Input Value: {inputValue}
             <br />
-            Bet Amount: {betAmount} ETH
+            Bet Amount: {betAmount} lumens
             <br />
             Total number of votes to bet: {parseFloat(votesToBet).toFixed(6)}  
         </div>
