@@ -62,7 +62,7 @@ const formatInt = (int) => {
         borderRadius: '5px',
     },
     title: {
-        color: 'purple',
+        color: 'orange',
         fontSize: '36px',
     },
     subheader: {
@@ -70,26 +70,29 @@ const formatInt = (int) => {
       fontSize: '28px',
     },
     description: {
-      color: 'gray',
+      color: 'white',
       fontSize: '24px',
-  },
+    },
+    carousel_deep_bg: {
+      backgroundColor: '#6600CC',
+    }
 };
 
 return (
-  <div className='h-screen/3 bg-yellow-700 my-10'>
+  <div className='h-screen/3 bg-violet-900 my-10'>
       <div className='w-4/8 mx-8 my-4'>
           <Slider {...settings}>
               {marketData.map((market, index) => (
-                  <div key={index} style={{ margin: "0 20px" }} className="bg-yellow-700 p-2">
-                      <div className='bg-white p-2 rounded-lg h-screen/3'>
+                  <div key={index} style={{ margin: "0 20px" }} className="p-2">
+                      <div className='bg-gray-800 p-2 rounded-lg h-screen/3'>
                           {/* <img src={market.imageUrl} alt={market.title} /> */}
-                          <p className='font-semibold text-black text-center'>{market.title}</p>
-                          <div className='p-6 bg-blue-600 p-2'>
+                          <p className='font-semibold text-white text-center p-2'>{market.title}</p>
+                          <div className='p-6 bg-blue-700 p-2'>
                               <p className='font-semibold text-white text-center'>{market.description}</p>
                           </div>
                           <button 
                               onClick={() => openModal(market)} // Pass the current market object
-                              className="my-4 mx-10 bg-green-600 text-white py-2 rounded"
+                              className="my-4 mx-10 bg-green-700 text-white py-2 rounded"
                           >
                               View Details
                           </button>
@@ -102,7 +105,7 @@ return (
           {/* Modal Component */}
           <Modal id="market-modal" isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} open="Open Modal">
               {selectedMarket && ( // Render content only if a market is selected
-                  <>
+                  <div className="bg-gray-800 p-3 rounded-lg">
 
                   <h2 style={styles.title}>{selectedMarket.title}</h2>
                   <p style={styles.description}>{selectedMarket.description}</p>
@@ -136,7 +139,7 @@ return (
                               contractData && (
                                   <>
                                       <h3 style={styles.title}>Data from Contract:</h3>
-                                      <pre>
+                                      <pre style={styles.subheader}>
                                          {Object.entries(contractData).map(([key, value]) => {
                                           // Check if the key is 'start_t'/'end_t' and format it
                                           const displayValue = key === 'start_t' | key === 'end_t' ? formatDateTime(value) : formatInt(value);
@@ -164,7 +167,7 @@ return (
                       <br />
                       <BetForm betOptions={selectedMarket.betOptions} betPercentage={selectedMarket.betPercentage} />
                       <br />
-                  </>
+                  </div>
               )}
           </Modal>
       </div>
