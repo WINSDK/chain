@@ -1,5 +1,5 @@
 import Types from '@stellar/freighter-api';
-import { Asset, Contract, BASE_FEE, SorobanRpc, Transaction, TransactionBuilder, Account, Address, xdr, Keypair, Operation, Networks, nativeToScVal, scValToNative } from "@stellar/stellar-sdk";
+import { Asset, Contract, BASE_FEE, SorobanRpc, Transaction, TransactionBuilder, Account, Address, xdr, Keypair, Operation, Networks, nativeToScVal, scValToNative, Memo } from "@stellar/stellar-sdk";
 import { getAddress, signTransaction } from '@stellar/freighter-api';
 import exec from 'sync-exec';
 
@@ -176,10 +176,11 @@ export async function CallPayment(
         amount: sendAmount,
         asset: sendAsset,
     }))
-    .setTimeout(30)
+    .setTimeout(90)
+    .addMemo(Memo.text("Payment to Contract Admin"))
     .build();
-    const prepTx = await server.prepareTransaction(tx);
-    const signedXdr = await Types.signTransaction(prepTx.toXDR(), {
+
+    const signedXdr = await Types.signTransaction(tx.toXDR(), {
         networkPassphrase: networkPass,
         address: sourceAcc.accountId()
     });
@@ -387,7 +388,6 @@ export async function RecordVotes(contractId: string, adminId: string, selected:
             console.log("votes:", votes);
             alert("Issue with invoking record_votes()");
         } else {
-            alert(JSON.stringify(contractResp));
             console.log(contractResp);
         }
 
@@ -402,9 +402,8 @@ export async function RecordVotes(contractId: string, adminId: string, selected:
             Asset.native(),
         )
         if (paymentResp == null) {
-            alert("Issue with sending payment");
+
         } else {
-            alert(JSON.stringify(paymentResp));
             console.log(paymentResp);
         }
     }
