@@ -84,6 +84,9 @@ return (
           <Slider {...settings}>
               {marketData.map((market, index) => (
                   <div key={index} style={{ margin: "0 20px" }} className="p-2">
+                    {/* <div className='bg-violet-900 p-auto'>
+                      
+                    </div> */}
                       <div className='bg-gray-800 p-2 rounded-lg h-screen/3'>
                           {/* <img src={market.imageUrl} alt={market.title} /> */}
                           <p className='font-semibold text-white text-center p-2'>{market.title}</p>
