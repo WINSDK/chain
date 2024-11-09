@@ -5,13 +5,14 @@ import BetForm from "./BetForm";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import marketData from "../data/markets.json";
-import { CallContract, ViewPredictionData } from "../../utils/contract_caller";
+import { ViewPredictionData, ViewVoter } from "../../utils/contract_caller";
 import { contract } from "@stellar/stellar-sdk";
 
 const SimpleSlider = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [selectedMarket, setSelectedMarket] = useState(null);
   const [contractData, setContractData] = useState(null); 
+  const [voterData, setVoterData] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [votePercentages, setVotePercentages] = useState([50, 50]);
 
@@ -26,8 +27,7 @@ const SimpleSlider = () => {
   // Async function to fetch data from contract
   const fetchContractData = async (contractId) => {
     try {
-      console.log("passed in contract id: ", contractId);
-      // const response = await CallContract(contractId);
+      console.log("to fetch contract data: passed in contract id: ", contractId);
       const response = await ViewPredictionData(contractId);
       setContractData(response);
     } catch (error) {
@@ -37,16 +37,32 @@ const SimpleSlider = () => {
     } 
   };
 
+  const fetchVoterData = async (contractId) => {
+    try {
+      setLoading(true);
+      console.log("to fetch voter data: passed in contract id: ", contractId);
+      const response = await ViewVoter(contractId);
+      console.log("response... ", response)
+      setVoterData(response);
+    } catch (error) {
+      console.error("Error fetching voter data:", error);
+    } finally {
+      setLoading(false); 
+    } 
+  };
+
   const openModal = async (market) => {
     setLoading(true);
     setSelectedMarket(market); // Set the selected market data
     await fetchContractData(market.contractId);
+    await fetchVoterData(market.contractId);
     setLoading(false);
     setIsModalOpen(true); // Open the modal
   };
 
   useEffect(() => {
     fetchContractData();
+    fetchVoterData();
   }, []); 
 
   const formatDateTime = (timestamp) => {
@@ -152,7 +168,11 @@ return (
                   <br />
                   <p style={styles.link}>
                     <a href={`https://stellar.expert/explorer/testnet/contract/${selectedMarket.contractId}`} target="_blank">
-                    Visit stellarExpert
+                    Visit stellarExpert Contract
+                  </a>
+                  <br/>
+                  <a href={`https://stellar.expert/explorer/testnet/account/${selectedMarket.adminId}`} target="_blank">
+                    Visit stellarExpert Admin
                   </a>
                     </p>
 
@@ -170,7 +190,7 @@ return (
                                     </h3>
                                     <div className='p-6 bg-purple-300 p-2 rounded-lg'>
                                       <p>
-                                        Cost per vote: {(votePercentages[index] / 100).toFixed(5)} ETH
+                                        Cost per vote: {(votePercentages[index]).toFixed(5)} lumens
                                       </p>
                                     </div>
                                     <br />
@@ -208,14 +228,40 @@ return (
                           )}
                       </div>
 
-                      {/* <img src={selectedMarket.imageUrl} alt={selectedMarket.title} /> */}
+
+                      <div>
+                            <br />
+                            {loading ? (
+                                <p>Loading...</p>
+                              ) : voterData && voterData.selected != "none" ? 
+                                (
+                                  // If voterData exists, display voter data
+                                  <div>
+                                    <h3 style={styles.title}>Voter Data:</h3>
+                                    <p style={styles.description}>You have already voted on this contract.</p>
+                                    <hr />
+                                    <pre style={styles.subheader}>
+                                      {Object.entries(voterData).map(([key, value]) => (
+                                        <div key={key}>
+                                          <strong>{key}: {value}</strong>
+                                        </div>
+                                      ))}
+                                    </pre>
+                                    <hr />
+                                  </div>
+                                ) :
+                                (
+                                  // If voterData doesn't exist, display the bet form
+                                  <div>
+                                    <h2 style={styles.title}>Place your bet below:</h2>
+                                    <BetForm betOptions={selectedMarket.betOptions} betPercentage={votePercentages} contractId={selectedMarket.contractId} adminId={selectedMarket.adminId} />
+                                  </div>
+                                )
+                              }
+                      </div>
+
                       <br />
 
-                      <h2 style={styles.title}>Place your bet below: </h2>
-                      <br />
-                      
-                      <BetForm betOptions={selectedMarket.betOptions} betPercentage={votePercentages} />
-                      <br />
                   </div>
               )}
           </Modal>

@@ -1,25 +1,34 @@
 import React, { useState } from "react";
+import {  RecordVotes } from "../../utils/contract_caller";
 
-function BetForm({ betOptions, betPercentage }) {
+function BetForm({ betOptions, betPercentage, contractId, adminId }) {
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [inputValue, setInputValue] = useState('');
     const [betAmount, setBetAmount] = useState('');
     const [votesToBet, setVotesToBet] = useState('');
+    
   
     const handleOptionChange = (event) => {
         const selectedIndex = betOptions.indexOf(event.target.value); // Find index of selected option
         setSelectedOption(event.target.value);
         setSelectedIndex(selectedIndex);
 
-        setBetAmount(betPercentage[selectedIndex] / 100);
-        setVotesToBet(inputValue * (betPercentage[selectedIndex] / 100));
+        setBetAmount(betPercentage[selectedIndex]);
+        setVotesToBet(inputValue * (betPercentage[selectedIndex]));
       };
   
     const handleInputChange = (event) => {
-        setInputValue(event.target.value);
-        setBetAmount(betPercentage[selectedIndex] / 100);
-        setVotesToBet(inputValue * (betPercentage[selectedIndex] / 100));
+        const value = event.target.value;
+        // Check if the input is an integer
+        if (/^\d+$/.test(value)) {
+          setInputValue(value);
+        } else {
+          // Handle invalid input, e.g., display an error message
+          console.error('Invalid input: Please enter an integer');
+        }
+        setBetAmount(betPercentage[selectedIndex]);
+        setVotesToBet(inputValue * (betPercentage[selectedIndex]));
 
     };
 
@@ -33,12 +42,19 @@ function BetForm({ betOptions, betPercentage }) {
   
     }
 
-    const handleSubmit   
-    = () => {
-       // Handle form submission here, e.g., send data to a server
-       console.log('Selected Option:', selectedOption);
-       console.log('Selected Index:', selectedIndex);
-       console.log('Input Value:', inputValue);
+    const handleSubmit = async () => {
+
+       let voteReceived;
+       
+        if (selectedIndex === 0) {
+            voteReceived = "OPT1";
+        } else if (selectedIndex === 1) {
+            voteReceived = "OPT2";
+        }
+
+        const response = await RecordVotes(contractId, adminId, voteReceived, inputValue);
+        console.log("After recording vote: ",response);
+
      };
 
   return (
@@ -46,12 +62,12 @@ function BetForm({ betOptions, betPercentage }) {
         {betOptions.map((option, index) => (
             <div key={index}>
             <input type="radio" value={option} checked={selectedOption === option} onChange={handleOptionChange} />
-            <label> {option}</label>
+            <label> {option}</label>       
             </div>
         ))}
       <br />
         <div>
-            <input type="text" value={inputValue} onChange={handleInputChange} placeholder="Enter your bet amount" />
+            <input type="number" value={inputValue} onChange={handleInputChange} placeholder="Only integers" defaultValue={1} />
         </div>
       <br />
         <button type="button" onClick={handleSubmit}> Place Bet</button>
@@ -59,11 +75,11 @@ function BetForm({ betOptions, betPercentage }) {
         <div>
             Selected Option: {selectedOption}
             <br />
-            Input Value: {inputValue}
+            Input number of votes: {inputValue}
             <br />
-            Bet Amount: {betAmount} ETH
+            Bet Amount per vote: {betAmount} lumens
             <br />
-            Total number of votes to bet: {parseFloat(votesToBet).toFixed(6)}  
+            Total bet amount: {parseInt(votesToBet)} lumens  
         </div>
     </form>
   );
