@@ -5,7 +5,7 @@ import BetForm from "./BetForm";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import marketData from "../data/markets.json";
-import { CallContract, ViewPredictionData, ViewVoter, RecordVotes } from "../../utils/contract_caller";
+import { ViewPredictionData, ViewVoter } from "../../utils/contract_caller";
 import { contract } from "@stellar/stellar-sdk";
 
 const SimpleSlider = () => {
@@ -39,8 +39,10 @@ const SimpleSlider = () => {
 
   const fetchVoterData = async (contractId) => {
     try {
+      setLoading(true);
       console.log("to fetch voter data: passed in contract id: ", contractId);
       const response = await ViewVoter(contractId);
+      console.log("response... ", response)
       setVoterData(response);
     } catch (error) {
       console.error("Error fetching voter data:", error);
@@ -231,29 +233,30 @@ return (
                             <br />
                             {loading ? (
                                 <p>Loading...</p>
-                              ) : voterData.selected == "none" ? (
-                                // If voterData doesn't exist, display the bet form
-                                <div>
-                                  <h2 style={styles.title}>Place your bet below:</h2>
-                                  <BetForm betOptions={selectedMarket.betOptions} betPercentage={votePercentages} />
-                                </div>
-                              ) :
-                              (
-                                // If voterData exists, display voter data
-                                <div>
-                                  <h3 style={styles.title}>Voter Data:</h3>
-                                  <p style={styles.description}>You have already voted on this contract.</p>
-                                  <hr />
-                                  <pre style={styles.subheader}>
-                                    {Object.entries(voterData).map(([key, value]) => (
-                                      <div key={key}>
-                                        <strong>{key}: {value}</strong>
-                                      </div>
-                                    ))}
-                                  </pre>
-                                  <hr />
-                                </div>
-                              )
+                              ) : voterData && voterData.selected != "none" ? 
+                                (
+                                  // If voterData exists, display voter data
+                                  <div>
+                                    <h3 style={styles.title}>Voter Data:</h3>
+                                    <p style={styles.description}>You have already voted on this contract.</p>
+                                    <hr />
+                                    <pre style={styles.subheader}>
+                                      {Object.entries(voterData).map(([key, value]) => (
+                                        <div key={key}>
+                                          <strong>{key}: {value}</strong>
+                                        </div>
+                                      ))}
+                                    </pre>
+                                    <hr />
+                                  </div>
+                                ) :
+                                (
+                                  // If voterData doesn't exist, display the bet form
+                                  <div>
+                                    <h2 style={styles.title}>Place your bet below:</h2>
+                                    <BetForm betOptions={selectedMarket.betOptions} betPercentage={votePercentages} contractId={selectedMarket.contractId} adminId={selectedMarket.adminId} />
+                                  </div>
+                                )
                               }
                       </div>
 

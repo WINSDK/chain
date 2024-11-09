@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import {  RecordVotes } from "../../utils/contract_caller";
 
-function BetForm({ betOptions, betPercentage }) {
+function BetForm({ betOptions, betPercentage, contractId, adminId }) {
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [inputValue, setInputValue] = useState('');
@@ -41,12 +42,19 @@ function BetForm({ betOptions, betPercentage }) {
   
     }
 
-    const handleSubmit   
-    = () => {
-       // Handle form submission here, e.g., send data to a server
-       console.log('Selected Option:', selectedOption);
-       console.log('Selected Index:', selectedIndex);
-       console.log('Input Value:', inputValue);
+    const handleSubmit = async () => {
+
+       let voteReceived;
+       
+        if (selectedIndex === 0) {
+            voteReceived = "OPT1";
+        } else if (selectedIndex === 1) {
+            voteReceived = "OPT2";
+        }
+
+        const response = await RecordVotes(contractId, adminId, voteReceived, inputValue);
+        console.log("After recording vote: ",response);
+
      };
 
   return (
@@ -54,7 +62,7 @@ function BetForm({ betOptions, betPercentage }) {
         {betOptions.map((option, index) => (
             <div key={index}>
             <input type="radio" value={option} checked={selectedOption === option} onChange={handleOptionChange} />
-            <label> {option}</label>
+            <label> {option}</label>       
             </div>
         ))}
       <br />
@@ -67,11 +75,11 @@ function BetForm({ betOptions, betPercentage }) {
         <div>
             Selected Option: {selectedOption}
             <br />
-            Input Value: {inputValue}
+            Input number of votes: {inputValue}
             <br />
-            Bet Amount: {betAmount} lumens
+            Bet Amount per vote: {betAmount} lumens
             <br />
-            Total number of votes to bet: {parseFloat(votesToBet).toFixed(6)}  
+            Total bet amount: {parseInt(votesToBet)} lumens  
         </div>
     </form>
   );
