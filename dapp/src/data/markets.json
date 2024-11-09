@@ -1,17 +1,17 @@
 [
-    { "title": "Prediction Market 1", "imageUrl": "/images/1.jpg", "description": "Will Singapore's full year core inflation value exceed 3.5% for 2024?" , "betOptions": ["Yes", "No"], "betPercentage": [72, 28],
+    { "title": "Prediction Market 1", "imageUrl": "/images/1.jpg", "description": "Will Singapore's full year core inflation value exceed 3.5% for 2024?" , "betOptions": ["Yes", "No"],
     "contractId": "CAAIZ6FO4YQW2EIVRCGFZH3TCX33KW37VMG4Z2FBMKHFJLBF6NJVKMZC",
     "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"},
-    { "title": "Prediction Market 2", "imageUrl": "/images/2.jpg", "description": "Will there be another MRT breakdown in 2024? " , "betOptions": ["Yes", "No"], "betPercentage": [65.5, 34.5], 
+    { "title": "Prediction Market 2", "imageUrl": "/images/2.jpg", "description": "Will there be another MRT breakdown in 2024? " , "betOptions": ["Yes", "No"], 
     "contractId": "CBOXESEVCKDV7PXPSPN6RJFXGRBGWLODNGD5SUZR37UPMDRQQ522XG2D",
     "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"},
-    { "title": "Prediction Market 3", "imageUrl": "/images/2.jpg", "description": "Will inflation resurface in 2026 following the pending tariffs to be implemented by the new USA administration starting 2025? " , "betOptions": ["Yes", "No"], "betPercentage": [65, 35],
+    { "title": "Prediction Market 3", "imageUrl": "/images/2.jpg", "description": "Will inflation resurface in 2026 following the pending tariffs to be implemented by the new USA administration starting 2025? " , "betOptions": ["Yes", "No"],
     "contractId": "CC6NGQ7T3EPLT7PX5MR4P2JBQBYB2LWYQVHX2ARPLPWVFGAFEBGYUKWB",
     "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"},
-    { "title": "Prediction Market 4", "imageUrl": "/images/1.jpg", "description": "Will marijuana remain illegal in Singapore by 2028?" , "betOptions": ["Yes", "No"], "betPercentage": [17, 83],
+    { "title": "Prediction Market 4", "imageUrl": "/images/1.jpg", "description": "Will marijuana remain illegal in Singapore by 2028?" , "betOptions": ["Yes", "No"],
     "contractId": "CDXIAFRSUF2PYKWBFDS3PPOUHEZ3FQMU55GPNXVUTJPESAGZFEV6HTPT",
     "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"},
-    { "title": "Prediction Market 5", "imageUrl": "/images/3.jpg", "description": "Will the Singapore government continue to leave Buy Now Pay Later (BNPL) loans generally unregulated by December 2025?" , "betOptions": ["Yes", "No"], "betPercentage": [61, 39],
+    { "title": "Prediction Market 5", "imageUrl": "/images/3.jpg", "description": "Will the Singapore government continue to leave Buy Now Pay Later (BNPL) loans generally unregulated by December 2025?" , "betOptions": ["Yes", "No"],
     "contractId": "CBKBB6IFCC6EDALKXFQYTYNBKETISPV3MDP57PCDP4R62I3QB6UOUHHQ",
     "adminId": "GCPDLOIP6SUZEBPAYMC2S3FXCUOH44QUDPUC5EUDZYYHRVFYTDX7LLAF"}
 ]
