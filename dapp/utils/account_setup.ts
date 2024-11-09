@@ -121,9 +121,6 @@ async function editMarkets(contractId: String) {
     });
 }
 
-await editMarkets("CDCR26KDWJ6JHLDSI6R4DBDE47SSFKRND3FSKVZOQZQHYTEN5DEP4J7D");
-
-
 // run with the contract ID to invoke the init function and start 
 // the contract with a specified duration in seconds
 async function initContract(contractId: String, duration: Number) {
