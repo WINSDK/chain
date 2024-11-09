@@ -152,7 +152,11 @@ return (
                   <br />
                   <p style={styles.link}>
                     <a href={`https://stellar.expert/explorer/testnet/contract/${selectedMarket.contractId}`} target="_blank">
-                    Visit stellarExpert
+                    Visit stellarExpert Contract
+                  </a>
+                  <br/>
+                  <a href={`https://stellar.expert/explorer/testnet/account/${selectedMarket.adminId}`} target="_blank">
+                    Visit stellarExpert Admin
                   </a>
                     </p>
 
@@ -170,7 +174,7 @@ return (
                                     </h3>
                                     <div className='p-6 bg-purple-300 p-2 rounded-lg'>
                                       <p>
-                                        Cost per vote: {(votePercentages[index] / 100).toFixed(5)} ETH
+                                        Cost per vote: {(votePercentages[index]).toFixed(5)} lumens
                                       </p>
                                     </div>
                                     <br />
