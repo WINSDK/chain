@@ -5,13 +5,14 @@ import BetForm from "./BetForm";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import marketData from "../data/markets.json";
-import { CallContract, ViewPredictionData } from "../../utils/contract_caller";
+import { CallContract, ViewPredictionData, ViewVoter, RecordVotes } from "../../utils/contract_caller";
 import { contract } from "@stellar/stellar-sdk";
 
 const SimpleSlider = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [selectedMarket, setSelectedMarket] = useState(null);
   const [contractData, setContractData] = useState(null); 
+  const [voterData, setVoterData] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [votePercentages, setVotePercentages] = useState([50, 50]);
 
@@ -26,8 +27,7 @@ const SimpleSlider = () => {
   // Async function to fetch data from contract
   const fetchContractData = async (contractId) => {
     try {
-      console.log("passed in contract id: ", contractId);
-      // const response = await CallContract(contractId);
+      console.log("to fetch contract data: passed in contract id: ", contractId);
       const response = await ViewPredictionData(contractId);
       setContractData(response);
     } catch (error) {
@@ -37,16 +37,30 @@ const SimpleSlider = () => {
     } 
   };
 
+  const fetchVoterData = async (contractId) => {
+    try {
+      console.log("to fetch voter data: passed in contract id: ", contractId);
+      const response = await ViewVoter(contractId);
+      setVoterData(response);
+    } catch (error) {
+      console.error("Error fetching voter data:", error);
+    } finally {
+      setLoading(false); 
+    } 
+  };
+
   const openModal = async (market) => {
     setLoading(true);
     setSelectedMarket(market); // Set the selected market data
     await fetchContractData(market.contractId);
+    await fetchVoterData(market.contractId);
     setLoading(false);
     setIsModalOpen(true); // Open the modal
   };
 
   useEffect(() => {
     fetchContractData();
+    fetchVoterData();
   }, []); 
 
   const formatDateTime = (timestamp) => {
@@ -212,14 +226,39 @@ return (
                           )}
                       </div>
 
-                      {/* <img src={selectedMarket.imageUrl} alt={selectedMarket.title} /> */}
+
+                      <div>
+                            <br />
+                            {loading ? (
+                                <p>Loading...</p>
+                              ) : voterData.selected == "none" ? (
+                                // If voterData doesn't exist, display the bet form
+                                <div>
+                                  <h2 style={styles.title}>Place your bet below:</h2>
+                                  <BetForm betOptions={selectedMarket.betOptions} betPercentage={votePercentages} />
+                                </div>
+                              ) :
+                              (
+                                // If voterData exists, display voter data
+                                <div>
+                                  <h3 style={styles.title}>Voter Data:</h3>
+                                  <p style={styles.description}>You have already voted on this contract.</p>
+                                  <hr />
+                                  <pre style={styles.subheader}>
+                                    {Object.entries(voterData).map(([key, value]) => (
+                                      <div key={key}>
+                                        <strong>{key}: {value}</strong>
+                                      </div>
+                                    ))}
+                                  </pre>
+                                  <hr />
+                                </div>
+                              )
+                              }
+                      </div>
+
                       <br />
 
-                      <h2 style={styles.title}>Place your bet below: </h2>
-                      <br />
-                      
-                      <BetForm betOptions={selectedMarket.betOptions} betPercentage={votePercentages} />
-                      <br />
                   </div>
               )}
           </Modal>
