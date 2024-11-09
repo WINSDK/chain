@@ -37,8 +37,6 @@ async function fundAccount(accountId: string) {
     }
 }
 
-// fundAccount();
-
 // run to deploy the prediction contract from the built wasm in
 async function setupPredictionContract() {
     try {
@@ -238,7 +236,7 @@ switch (answer) {
             }
         });
         contractId.toUpperCase();
-        const winner = await input({
+        let winner = await input({
             message: 'Enter the contract ID:',
             required: true,
             transformer(value, { isFinal }) {
@@ -254,6 +252,7 @@ switch (answer) {
             }
         });
         winner.toUpperCase();
+        await closeContract(contractId, winner);
         break;
     }
     case '4': {
