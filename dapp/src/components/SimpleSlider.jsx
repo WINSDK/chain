@@ -77,8 +77,8 @@ const formatInt = (int) => {
 useEffect(() => {
   if (contractData) {
     // Assuming contractData contains votes for options
-    const opt_1_votes = contractData.opt_1 || 0; 
-    const opt_2_votes = contractData.opt_2 || 0; 
+    const opt_1_votes = Number(contractData.opt_1) || 0; 
+    const opt_2_votes = Number(contractData.opt_2) || 0; 
 
     // Compute percentages only once when contractData changes
     const [percentageOption1, percentageOption2] = computeBetPercentages(opt_1_votes, opt_2_votes);
@@ -190,7 +190,7 @@ return (
                                     </h3>
                                     <div className='p-6 bg-purple-300 p-2 rounded-lg'>
                                       <p>
-                                        Cost per vote: {(votePercentages[index]).toFixed(5)} lumens
+                                        Cost per vote: {parseInt(votePercentages[index])} lumens
                                       </p>
                                     </div>
                                     <br />
@@ -241,11 +241,21 @@ return (
                                     <p style={styles.description}>You have already voted on this contract.</p>
                                     <hr />
                                     <pre style={styles.subheader}>
-                                      {Object.entries(voterData).map(([key, value]) => (
-                                        <div key={key}>
-                                          <strong>{key}: {value}</strong>
-                                        </div>
-                                      ))}
+                                      {Object.entries(voterData).map(([key, value]) => 
+                                      {
+                                        // Check if the key is 'start_t'/'end_t' and format it
+                                        const displayValue = key === 'time' ? formatDateTime(value) : key === 'votes'? formatInt(value): value;
+                                        const relabelKey = key === 'time' ? 'Timestamp of Vote' : 
+                                        key === 'votes' ? 'Total votes cast'                                         
+                                        : key;
+                                        return (
+                                            <div key={key}>
+                                                <strong>{relabelKey}:</strong> {displayValue}
+                                            </div>
+                                        );
+                                      
+                                      }
+                                      )}
                                     </pre>
                                     <hr />
                                   </div>
