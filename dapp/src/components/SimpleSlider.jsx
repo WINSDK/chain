@@ -38,8 +38,10 @@ const SimpleSlider = () => {
   };
 
   const openModal = async (market) => {
+    setLoading(true);
     setSelectedMarket(market); // Set the selected market data
     await fetchContractData(market.contractId);
+    setLoading(false);
     setIsModalOpen(true); // Open the modal
   };
 
@@ -113,6 +115,9 @@ const computeBetPercentages = (votesOption1, votesOption2) => {
 return (
   <div className='h-screen/3 bg-violet-900 my-10'>
       <div className='w-4/8 mx-8 my-4'>
+        <br />
+        {loading && <p style={styles.title}>Loading contract details...</p>}
+        <br />
           <Slider {...settings}>
               {marketData.map((market, index) => (
                   <div key={index} style={{ margin: "0 20px" }} className="p-2">
