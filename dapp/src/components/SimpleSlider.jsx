@@ -6,12 +6,14 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import marketData from "../data/markets.json";
 import { CallContract, ViewPredictionData } from "../../utils/contract_caller";
+import { contract } from "@stellar/stellar-sdk";
 
 const SimpleSlider = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [selectedMarket, setSelectedMarket] = useState(null);
   const [contractData, setContractData] = useState(null); 
   const [loading, setLoading] = useState(true);
+  const [votePercentages, setVotePercentages] = useState([50, 50]);
 
   var settings = {
     dots: true,
@@ -54,6 +56,20 @@ const formatInt = (int) => {
   return parseInt(int);
 };
 
+
+// Function to compute bet percentages
+const computeBetPercentages = (votesOption1, votesOption2) => {
+  const totalVotes = votesOption1 + votesOption2;
+  
+  // Avoid division by zero
+  if (totalVotes === 0) return [50, 50];
+
+  const percentageOption1 = (votesOption1 / totalVotes) * 100;
+  const percentageOption2 = (votesOption2 / totalVotes) * 100;
+
+  return [percentageOption1.toFixed(2), percentageOption2.toFixed(2)];
+};
+
   const styles = {
     container: {
         margin: '20px',
@@ -73,6 +89,10 @@ const formatInt = (int) => {
       color: 'white',
       fontSize: '24px',
     },
+    link: {
+      color: 'pink',
+      fontSize: '24px',
+  },
     carousel_deep_bg: {
       backgroundColor: '#6600CC',
     }
@@ -113,24 +133,43 @@ return (
                   <h2 style={styles.title}>{selectedMarket.title}</h2>
                   <p style={styles.description}>{selectedMarket.description}</p>
                   <br />
+                  <p style={styles.link}>
+                    <a href={`https://stellar.expert/explorer/testnet/contract/${selectedMarket.contractId}`} target="_blank">
+                    Visit stellarExpert
+                  </a>
+                    </p>
+
+                  <br />
                       <hr />
                   <br/>
                       <div className='p-6 bg-gray-700'>
                       <br />
                             <ul className='font-semibold text-white text-center unstyled'>
-                           {selectedMarket.betOptions.map((option, index) => (
+                           {contractData && selectedMarket.betOptions.map((option, index) => {
+
+                            const opt_1_votes = contractData.opt_1 || 0;
+                            const opt_2_votes = contractData.opt_2 || 0;
+                            
+                            const [percentageOption1, percentageOption2] = computeBetPercentages(opt_1_votes, opt_2_votes);
+                            // setVotePercentages([percentageOption1, percentageOption2]);
+
+                            // console.log("To pass vote percentages to BetForm: ", votePercentages);
+
+                           return (
                                 <li key={index}>
                                   <h3 style={styles.subheader}>
-                                    {option}  ({selectedMarket.betPercentage[index]}%)
+                                    {option} ({index === 0 ? percentageOption1 : percentageOption2}%)
                                   </h3>
                                   <div className='p-6 bg-purple-300 p-2 rounded-lg'>
                                     <p>
-                                      Cost per vote: {selectedMarket.betPercentage[index].toFixed(5) / 1000} ETH
+                                      Cost per vote: {index === 0 ? percentageOption1 : percentageOption2} ETH
                                     </p>
                                   </div>
                                   <br />
                                 </li>
-                              ))}
+                              )}
+                            )}
+
                             </ul>
                           </div>
 
@@ -168,7 +207,8 @@ return (
 
                       <h2 style={styles.title}>Place your bet below: </h2>
                       <br />
-                      <BetForm betOptions={selectedMarket.betOptions} betPercentage={selectedMarket.betPercentage} />
+                      
+                      <BetForm betOptions={selectedMarket.betOptions} />
                       <br />
                   </div>
               )}
@@ -180,3 +220,6 @@ return (
 
 
 export default SimpleSlider;
+
+
+
