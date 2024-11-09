@@ -12,14 +12,14 @@ function BetForm({ betOptions, betPercentage }) {
         setSelectedOption(event.target.value);
         setSelectedIndex(selectedIndex);
 
-        setBetAmount(betPercentage[selectedIndex]);
-        setVotesToBet(inputValue / betPercentage[selectedIndex]);
+        setBetAmount(betPercentage[selectedIndex] / 100);
+        setVotesToBet(inputValue * (betPercentage[selectedIndex] / 100));
       };
   
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
-        setBetAmount(betPercentage[selectedIndex]);
-        setVotesToBet(inputValue / betPercentage[selectedIndex]);
+        setBetAmount(betPercentage[selectedIndex] / 100);
+        setVotesToBet(inputValue * (betPercentage[selectedIndex] / 100));
 
     };
 

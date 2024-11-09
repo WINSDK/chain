@@ -56,6 +56,18 @@ const formatInt = (int) => {
   return parseInt(int);
 };
 
+useEffect(() => {
+  if (contractData) {
+    // Assuming contractData contains votes for options
+    const opt_1_votes = contractData.opt_1 || 0; 
+    const opt_2_votes = contractData.opt_2 || 0; 
+
+    // Compute percentages only once when contractData changes
+    const [percentageOption1, percentageOption2] = computeBetPercentages(opt_1_votes, opt_2_votes);
+    setVotePercentages([percentageOption1, percentageOption2]); // Update state with new percentages
+  }
+}, [contractData]); // Run this effect when contractData changes
+
 
 // Function to compute bet percentages
 const computeBetPercentages = (votesOption1, votesOption2) => {
@@ -145,31 +157,20 @@ return (
                       <div className='p-6 bg-gray-700'>
                       <br />
                             <ul className='font-semibold text-white text-center unstyled'>
-                           {contractData && selectedMarket.betOptions.map((option, index) => {
-
-                            const opt_1_votes = contractData.opt_1 || 0;
-                            const opt_2_votes = contractData.opt_2 || 0;
-                            
-                            const [percentageOption1, percentageOption2] = computeBetPercentages(opt_1_votes, opt_2_votes);
-                            // setVotePercentages([percentageOption1, percentageOption2]);
-
-                            // console.log("To pass vote percentages to BetForm: ", votePercentages);
-
-                           return (
-                                <li key={index}>
-                                  <h3 style={styles.subheader}>
-                                    {option} ({index === 0 ? percentageOption1 : percentageOption2}%)
-                                  </h3>
-                                  <div className='p-6 bg-purple-300 p-2 rounded-lg'>
-                                    <p>
-                                      Cost per vote: {index === 0 ? percentageOption1 : percentageOption2} ETH
-                                    </p>
-                                  </div>
-                                  <br />
-                                </li>
-                              )}
-                            )}
-
+ 
+                            {selectedMarket.betOptions.map((option, index) => (
+                                  <li key={index}>
+                                    <h3 style={styles.subheader}>
+                                      {option} ({votePercentages[index]}%)
+                                    </h3>
+                                    <div className='p-6 bg-purple-300 p-2 rounded-lg'>
+                                      <p>
+                                        Cost per vote: {(votePercentages[index] / 100).toFixed(5)} ETH
+                                      </p>
+                                    </div>
+                                    <br />
+                                  </li>
+                                ))}
                             </ul>
                           </div>
 
@@ -208,7 +209,7 @@ return (
                       <h2 style={styles.title}>Place your bet below: </h2>
                       <br />
                       
-                      <BetForm betOptions={selectedMarket.betOptions} />
+                      <BetForm betOptions={selectedMarket.betOptions} betPercentage={votePercentages} />
                       <br />
                   </div>
               )}
