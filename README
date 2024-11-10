@@ -1,14 +1,13 @@
 =====
 block chain class assignment
 
-
 For each contract, run the following to deploy to testnet and initialise:
 
-1) add admin keypair in .env
+1) add admin Stellar keypair in .env
 2) run the script in dapp/util/account_setup.ts
-3) start the dapp
+3) start the dapp (npm run dev)
 
-Check the /dapp README for more instructions.
+Check the /dapp README for further instructions on deployment of the web application.
 
-How to generate test account:
-* stellar keys generate --global me --network testnet
+Each prediction market uses its own contract deployment. Check out the video below for detailed instructions.
+https://youtu.be/8a404vNRjyE
